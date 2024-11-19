@@ -1,0 +1,35 @@
+<h4 class="display-6 lead mb-1">Worksheets</h4>
+<p>
+    The worksheets below are re-generated every day, allowing students to practice new sets of problems each day at the appropriate level.
+</p>
+<div class="accordion" id="accordionExample">
+  {% for type in site.data.worksheets %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ type.problem-type }}" aria-expanded="true" aria-controls="collapse{{ type.problem-type }}">
+          <h5>{{ type.problem-type }} Worksheets</h5>
+        </button>
+      </h2>
+      <div id="collapse{{ type.problem-type }}" class="accordion-collapse collapse" aria-labelledby="heading{{ type.problem-type }}" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+
+          <ul>
+            {% for subtype in type.subtype %}
+              <li><h6>{{ subtype.description }}</h6>
+
+                <div class="btn-group pt-0">
+                    {% for level in subtype.worksheets %}
+                        <a href="{{ level.pdf }}" class="text-dark btn btn-outline-secondary" target="_blank"><i class="fa-regular fa-file-pdf fa-lg"></i> {{ level.description }}</a>
+                    {% endfor %}
+                </div>
+
+              </li>
+            {% endfor %}
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+</div>

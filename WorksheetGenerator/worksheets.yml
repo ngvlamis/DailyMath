@@ -1,0 +1,62 @@
+addition:
+  single-digit-addition:
+    - description: Adding two single-digit numbers
+    - worksheets:
+      - latex-description: A daily worksheet of one-digit addition problems, with sums up to 10.
+        largest-term: 9
+        constraint-type: max
+        constraint: 10
+        description: Sum &le; 10
+        filename: sda1
+        pdf: /assets/worksheets/addition_worksheet.pdf
+
+      - latex-description: A daily worksheet of one-digit addition problems, with sums up to 12.
+        largest-term: 9
+        constraint-type: max
+        constraint: 12
+        description: Sum &le; 12
+        filename: sda2
+        pdf: /assets/worksheets/addition_worksheet.pdf
+
+      - latex-description: A daily worksheet of one-digit addition problems, with sums up to 15.
+        largest-term: 9
+        constraint-type: max
+        constraint: 15
+        description: Sum &le; 15
+        filename: sda3
+        pdf: /assets/worksheets/addition_worksheet.pdf
+
+      - latex-description: A daily worksheet of one-digit addition problems.
+        largest-term: 9
+        constraint-type: max
+        constraint: 20
+        description: Sum &le; 18
+        filename: sda4
+        pdf: /assets/worksheets/addition_worksheet.pdf
+
+subtraction:
+  single-digit-subtraction:
+    - description: Subtracting two single-digit numbers
+    - worksheets:
+      - latex-description: A daily worksheet of one-digit subtraction problems, with the smaller digit at most 3.
+        largest-term: 9
+        constraint-type: smallest term
+        constraint: 3
+        description: Subtracting numbers &le; 3
+        filename: sds1
+
+      - latex-description: A daily worksheet of one-digit subtraction problems, with differences \( \leq \) 3.
+        largest-term: 9
+        constraint-type: difference
+        constraint: 3
+        description: Difference &le; 3
+        filename: sds2
+
+      - latex-description: A daily worksheet of one-digit subtraction problems.
+        largest-term: 9
+        constraint-type: difference
+        constraint: 9
+        description: Difference &le; 9
+        filename: sds3
+
+

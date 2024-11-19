@@ -1,0 +1,8 @@
+url: localhost:4000 # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "" # the subpath of your site, e.g. /blog
+title: "DailyMath.education" # the name of your site, e.g. ACME Corp.
+description: "Daily generated worksheets for math fluency"
+email: "contact@dailymath.education"
+
+exclude: ['Gemfile', 'Gemfile.lock', 'LICENSE.txt', 'README.md']
+include: ['.nojekyll', 'CNAME']
