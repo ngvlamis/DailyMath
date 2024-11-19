@@ -127,16 +127,16 @@ def create_latex(rows, cols, int_pairs, p_type, description, logo):
     return latex_content
 
 
-def save_latex_file(content, filename="TeX/worksheet.tex"):
+def save_latex_file(content, filename):
     with open(filename, "w") as lfile:
         lfile.write(content)
 
 
 def generate_pdf(tex_file_path):
-    compile_dir = os.path.dirname(tex_file_path)
     tex_file_name = os.path.basename(tex_file_path)
-    subprocess.run(["pdflatex", "-interaction=batchmode", tex_file_name], cwd=compile_dir, check=True)
-    print(f"PDF generated at {compile_dir}")
+    print("=" * 60)
+    print(f'Generating PDF from {tex_file_path}')
+    subprocess.run(["pdflatex", "-interaction=batchmode", tex_file_name], check=True)
 
 
 def delete_aux_files(folder_path):
@@ -145,9 +145,8 @@ def delete_aux_files(folder_path):
     # Find and delete each matching file
     for pattern in patterns:
         for file_path in glob.glob(os.path.join(folder_path, pattern)):
-            print(file_path)
             os.remove(file_path)
-            print(f"{file_path} deleted successfully.")
+            # print(f"{file_path} deleted successfully.")
 
 
 if __name__ == "__main__":
@@ -179,10 +178,20 @@ if __name__ == "__main__":
                                              ws_cols, worksheet['largest-term']) # Generate the problems.
                 latex_content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], logo_path) # Take generated problems and write LaTeX file
                 base_name = worksheet['filename']
-                save_latex_file(latex_content, f'TeX/{base_name}.tex') # Save the LaTeX file
-                generate_pdf(f'TeX/{base_name}.tex') # Run LateX to generate pdf; requires TeX-Live install on system.
-                source_path=f'TeX/{base_name}.pdf'
+                save_latex_file(latex_content, f'{base_name}.tex') # Save the LaTeX file
+                try:
+                    generate_pdf(f'{base_name}.tex') # Run LateX to generate pdf; requires TeX-Live install on system.
+                except:
+                    print(f'PDF generation of {base_name}.tex failed.  Check to make sure you have Tex Live installed.')
+                    break
+                source_path=f'{base_name}.pdf'
                 destination_path = pdf_destination + f'{base_name}.pdf'
                 shutil.move(source_path, destination_path) # Move pdfs to appropriate folder.
 
-    delete_aux_files('TeX') # Delete all the non-pdfs files generated during the process.
+    try:
+        delete_aux_files('') # Delete all the non-pdfs files generated during the process.
+        print("=" * 60)
+        print('Auxiliary files deleted successfully.')
+    except:
+        print("=" * 60)
+        print('Deleting auxiliary files failed.')
