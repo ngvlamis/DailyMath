@@ -51,6 +51,7 @@
           constraint-type: difference
           constraint: 3
           description: Difference &le; 3
+          filename: sds2
           pdf: /worksheets/sds2.pdf
 
         - latex-description: A daily worksheet of one-digit subtraction problems.

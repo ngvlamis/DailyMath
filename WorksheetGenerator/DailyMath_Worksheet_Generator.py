@@ -1,3 +1,22 @@
+"""
+    DailyMath Worksheet Generator
+    This script generates all the worksheets on the website DailyMath.education.
+    Copyright (C) 2024  Nicholas G. Vlamis
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 import random, os, subprocess, shutil, glob, yaml
 
 def generate_problems(p_info, rows, cols, largest):
@@ -36,7 +55,7 @@ def generate_problems(p_info, rows, cols, largest):
     return new_problems
 
 
-def create_latex(rows, cols, int_pairs, p_type, description):
+def create_latex(rows, cols, int_pairs, p_type, description, logo):
     latex_content = r"""\documentclass{article}
 \usepackage[fontsize=20pt]{fontsize}
 \usepackage[letterpaper, margin=1in]{geometry}
@@ -60,7 +79,7 @@ def create_latex(rows, cols, int_pairs, p_type, description):
 
 \noindent
 \begin{minipage}[t]{1.3cm}
-\includegraphics[scale=0.1]{/Users/vlamis/GitHub/DailyMath/WorksheetGenerator/TeX/cat-abacus}
+\includegraphics[scale=0.1]{""" + logo + r"""}
 \end{minipage}
 \raisebox{1ex}{
 \begin{minipage}[c]{4cm}
@@ -132,29 +151,38 @@ def delete_aux_files(folder_path):
 
 
 if __name__ == "__main__":
-    # Generate problems and create the LaTeX file
+
+    # Generate pdf worksheets based on config file.
+
+    # Set the number of columns and rows for the worksheet.
     ws_rows = 4
     ws_cols = 5
 
-    pdf_destination = os.path.expanduser("~") + '/GitHub/DailyMath/Website/worksheets/'
+    # Set default paths
+    current_directory = os.getcwd() # Get the current working directory
+    project_directory = os.path.abspath(os.path.join(current_directory, "..")) # Go one step back to the parent directory
+    ws_yaml_path =  os.path.join(project_directory,'WebsiteGenerator/_data/worksheets.yml') # Path of config file for worksheets
+    pdf_destination = os.path.join(project_directory,'worksheets/') # Path of worksheets
+    logo_path = os.path.join(project_directory, 'WebsiteGenerator/assets/img/cat-abacus.png') # Path of DailyMath logo
 
     # Open the YAML config file
-    with open('worksheets.yml', 'r') as file:
+    with open(ws_yaml_path, 'r') as file:
         # Load the contents of the file
-        data = yaml.safe_load(file)
+        config = yaml.safe_load(file)
 
-    for field in data:
-        for topic in data[field]:
-            for item in data[field][topic]:
-                if 'worksheets' in item:
-                    for worksheet in item['worksheets']:
-                        problems = generate_problems([field, worksheet['constraint-type'], worksheet['constraint']], ws_rows, ws_cols, worksheet['largest-term'])
-                        latex_table = create_latex(ws_rows, ws_cols, problems, field, worksheet['latex-description'])
-                        base_name = worksheet['filename']
-                        save_latex_file(latex_table, f'TeX/{base_name}.tex')
-                        generate_pdf(f'TeX/{base_name}.tex')
-                        source_path=f'TeX/{base_name}.pdf'
-                        destination_path = pdf_destination + f'{base_name}.pdf'
-                        shutil.move(source_path, destination_path)
+    # Cycle through all the worksheets in the config file, generating the pdfs.
+    for field in config: #Cylce through the types of problems, e.g., addition, substraction, etc.
+        problem_type = str.lower(field['problem-type']) #Record the type of problem.
+        for topic in field['subtype']: # Cycle through the sub-fields, e.g., single digit addition.
+            for worksheet in topic['worksheets']: #Cycle through the worksheets in each sub-field
+                problems = generate_problems([problem_type, worksheet['constraint-type'], worksheet['constraint']], ws_rows,
+                                             ws_cols, worksheet['largest-term']) # Generate the problems.
+                latex_content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], logo_path) # Take generated problems and write LaTeX file
+                base_name = worksheet['filename']
+                save_latex_file(latex_content, f'TeX/{base_name}.tex') # Save the LaTeX file
+                generate_pdf(f'TeX/{base_name}.tex') # Run LateX to generate pdf; requires TeX-Live install on system.
+                source_path=f'TeX/{base_name}.pdf'
+                destination_path = pdf_destination + f'{base_name}.pdf'
+                shutil.move(source_path, destination_path) # Move pdfs to appropriate folder.
 
-    delete_aux_files('TeX')
+    delete_aux_files('TeX') # Delete all the non-pdfs files generated during the process.
