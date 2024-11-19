@@ -21,7 +21,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git commit -a -m "Automated commit: Re-generate worksheets"
 
     # Push changes to the remote repository
-    git push origin main  # Push changes to main branch
+    #git push origin main  # Push changes to main branch
 else
     echo "No changes to commit."
 fi
