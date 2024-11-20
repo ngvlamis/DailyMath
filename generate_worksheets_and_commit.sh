@@ -10,12 +10,12 @@ cd $HOME/GitHub/DailyMath/WorksheetGenerator/
 source .venv/bin/activate || exit 1  # Ensure virtualenv is activated
 
 # Switch to correct git branch
-git switch testing-again
+git switch gh-pages
 
 # Run python script to generator worksheets
 python3 DailyMath_Worksheet_Generator.py
 
-# Check to make sure git recognizes  changes
+# Check to make sure git recognizes changes
 if [ -n "$(git status --porcelain)" ]; then
 
     cd ..
@@ -27,7 +27,8 @@ if [ -n "$(git status --porcelain)" ]; then
     git commit -m "Automated commit: Re-generate worksheets"
 
     # Push changes to the remote repository
-    git push origin testing-again  # Push changes to testing-again branch
+    git push origin gh-pages  # Push changes to testing-again branch
+
 else
     echo "No changes to commit."
 fi
