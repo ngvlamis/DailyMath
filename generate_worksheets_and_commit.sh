@@ -4,24 +4,30 @@
 set -e
 
 # Change to the target directory
-cd $HOME/GitHub/DailyMath/WorksheetGenerator
+cd $HOME/GitHub/DailyMath/WorksheetGenerator/
 
 # Activate the virtual environment
 source .venv/bin/activate || exit 1  # Ensure virtualenv is activated
+
+# Switch to correct git branch
+git switch testing-again
 
 # Run python script to generator worksheets
 python3 DailyMath_Worksheet_Generator.py
 
 # Check to make sure git recognizes  changes
 if [ -n "$(git status --porcelain)" ]; then
-    # Add all changes
-    #git add .
+
+    cd ..
+
+    # Add all changes to worksheets
+    git add worksheets/
 
     # Commit changes
-    git commit -a -m "Automated commit: Re-generate worksheets"
+    git commit -m "Automated commit: Re-generate worksheets"
 
     # Push changes to the remote repository
-    #git push origin main  # Push changes to main branch
+    git push origin testing-again  # Push changes to testing-again branch
 else
     echo "No changes to commit."
 fi
