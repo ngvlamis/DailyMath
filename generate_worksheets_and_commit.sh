@@ -7,7 +7,7 @@ set -e
 cd $HOME/GitHub/DailyMath/WorksheetGenerator/
 
 # Activate the virtual environment
-source .venv/bin/activate || exit 1  # Ensure virtualenv is activated
+source $HOME/GitHub/DailyMath/WebsiteGenerator/.venv/bin/activate || exit 1  # Ensure virtualenv is activated
 
 # Switch to correct git branch
 git switch gh-pages
