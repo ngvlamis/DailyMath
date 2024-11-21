@@ -59,7 +59,6 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo):
     latex_content = r"""\documentclass{article}
 \usepackage[fontsize=20pt]{fontsize}
 \usepackage[letterpaper, margin=1in]{geometry}
-\usepackage{xlop}
 \usepackage{graphicx}
 
 
