@@ -1,5 +1,5 @@
 
-# DailyMath.education ![DailyMath logo](https://dailymath.education/assets/img/apple-touch-icon.png)
+# ![DailyMath logo](https://dailymath.education/assets/img/apple-touch-icon.png) DailyMath.education 
 
 
 This repository contains the source code used to generate the website [DailyMath.education](https://dailymath.education).
