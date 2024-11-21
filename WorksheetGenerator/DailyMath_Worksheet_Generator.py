@@ -55,12 +55,13 @@ def generate_problems(p_info, rows, cols, largest):
     return new_problems
 
 
-def create_latex(rows, cols, int_pairs, p_type, description, logo):
+def create_latex(rows, cols, int_pairs, p_type, description, alg, logo):
     latex_content = r"""\documentclass{article}
 \usepackage[fontsize=20pt]{fontsize}
 \usepackage[letterpaper, margin=1in]{geometry}
 \usepackage{xlop}
 \usepackage{graphicx}
+
 
 \newcommand\Block[1]{%
 \setlength\fboxsep{0pt}\setlength\fboxrule{0.1pt}% delete
@@ -72,6 +73,9 @@ def create_latex(rows, cols, int_pairs, p_type, description, logo):
 }
 
 \newcommand\gobble[1]{}% Print <nothing> regardless of input
+
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}         % = `top' strut
+\newcommand\Bstrut{\rule[-2ex]{0pt}{0pt}}   % = `bottom' strut
 
 \begin{document}
 
@@ -104,17 +108,42 @@ def create_latex(rows, cols, int_pairs, p_type, description, logo):
         for j in range(cols):
             x = int_pairs[5*i+j][0]
             y = int_pairs[5*i+j][1]
-            latex_content = (latex_content +
-                             ('\\Block{ \n'
-                              '\\[ \n'
-                              '	\\begin{array}{l r}\n'
-                              f'			& {x} \\\\\n'))
-            if p_type == 'addition':
-                latex_content = latex_content + f'		+	& {y} \\\\\n'
-            elif p_type == 'subtraction':
-                latex_content = latex_content + f'		-	& {y} \\\\\n'
+            latex_content = latex_content + '\\Block{ \n'
+            if not alg:
+                latex_content = (latex_content +
+                                 (  '\\[ \n'
+                                    '	\\begin{array}{l r}\n'
+                                    f'			& {x} \\\\\n'))
+            elif alg:
+                latex_content = (latex_content +
+                                (   '\\vspace{-.75ex}\n'
+                                    '\\[ \n'
+                                    '	\\begin{array}{l r}\n'
+                                    f'			& {x} \\\\\n'))
 
-            latex_content = (latex_content +
+
+            if p_type == 'addition' and not alg:
+                latex_content = latex_content + f'		+ 	& {y} \\\\\n'
+            elif p_type == 'addition' and alg:
+                latex_content = (latex_content +
+                                 (f'		+	&  \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
+                                  '             \hline\n'
+                                  f'            & {x + y} \Tstrut \\\\\n'
+                                  '	\end{array}\n'
+                                  '\\]\n'
+                                  '}%\n'))
+            elif p_type == 'subtraction' and not alg:
+                latex_content = latex_content + f'		-	& {y} \\\\\n'
+            elif p_type == 'subtraction' and alg:
+                latex_content = (latex_content +
+                                 (f'		-	& \\gobble{{{y}}} \\\\\n'
+                                  '             \hline\n'
+                                  f'            & {x - y} \Tstrut \\\\\n'
+                                  '	\end{array}\n'
+                                  '\\]\n'
+                                  '}%\n'))
+            if not alg:
+                latex_content = (latex_content +
                              ('	    \hline\n'
                               '	\end{array}\n'
                               '\\]\n'
@@ -170,13 +199,15 @@ if __name__ == "__main__":
         config = yaml.safe_load(file)
 
     # Cycle through all the worksheets in the config file, generating the pdfs.
-    for field in config: #Cylce through the types of problems, e.g., addition, substraction, etc.
+    for field in config: #Cylce through the types of problems, e.g., addition, subtraction, etc.
         problem_type = str.lower(field['problem-type']) #Record the type of problem.
         for topic in field['subtype']: # Cycle through the sub-fields, e.g., single digit addition.
+            is_algebra = topic['algebra']
+            print(is_algebra)
             for worksheet in topic['worksheets']: #Cycle through the worksheets in each sub-field
                 problems = generate_problems([problem_type, worksheet['constraint-type'], worksheet['constraint']], ws_rows,
                                              ws_cols, worksheet['largest-term']) # Generate the problems.
-                latex_content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], logo_path) # Take generated problems and write LaTeX file
+                latex_content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], is_algebra, logo_path) # Take generated problems and write LaTeX file
                 base_name = worksheet['filename']
                 save_latex_file(latex_content, f'{base_name}.tex') # Save the LaTeX file
                 try:

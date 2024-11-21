@@ -1,6 +1,7 @@
 - problem-type: Addition
   subtype:
     - description: Adding two single-digit numbers
+      algebra: False
       worksheets:
         - latex-description: A daily worksheet of one-digit addition problems, with sums up to 10.
           largest-term: 9
@@ -34,9 +35,45 @@
           filename: sda4
           pdf: /worksheets/sda4.pdf
 
+    - description: "Algebra: adding two-single digit numbers"
+      algebra: True
+      worksheets:
+        - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 10.
+          largest-term: 9
+          constraint-type: max
+          constraint: 10
+          description: Sum &le; 10
+          filename: sdaa1
+          pdf: /worksheets/sdaa1.pdf
+
+        - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 12.
+          largest-term: 9
+          constraint-type: max
+          constraint: 12
+          description: Sum &le; 12
+          filename: sdaa2
+          pdf: /worksheets/sdaa2.pdf
+
+        - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 15.
+          largest-term: 9
+          constraint-type: max
+          constraint: 15
+          description: Sum &le; 15
+          filename: sdaa3
+          pdf: /worksheets/sdaa3.pdf
+
+        - latex-description: A daily worksheet of one-digit addition problems, with a blank addend.
+          largest-term: 9
+          constraint-type: max
+          constraint: 20
+          description: Sum &le; 18
+          filename: sdaa4
+          pdf: /worksheets/sdaa4.pdf
+
 - problem-type: Subtraction
   subtype:
     - description: Subtracting two single-digit numbers
+      algebra: False
       worksheets:
         - latex-description: A daily worksheet of one-digit subtraction problems, with the smaller digit at most 3.
           largest-term: 9
