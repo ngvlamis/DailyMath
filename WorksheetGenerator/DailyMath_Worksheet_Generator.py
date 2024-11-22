@@ -21,20 +21,26 @@ import random, os, subprocess, shutil, glob, yaml
 
 def generate_problems(p_info, rows, cols, largest):
     new_problems = []
-    smallest = 1
     a = 0
     b = 0
-    if p_info[0]=='addition':
+    if p_info[0] in ['addition','multiplication']:
+        if p_info[0] == 'addition':
+            smallest = 1
+        elif p_info[0] == 'multiplication':
+            smallest = 2
 
-        if p_info[1]=='max':
+        if p_info[1] in ['max', 'none', 'smallest term']:
             ub = p_info[2]
             for _ in range(rows * cols):
                 a1 = a
                 b1 = b
                 while a1 == a and b1 == b:  # Ensure the same problem does not appear twice in a row
-                    if ub> 0:
+                    if p_info[1] == 'max':
                         a = random.randint(smallest, min(largest, ub))
                         b = random.randint(smallest, min(largest, ub - a))  # Ensures sum is <= max_value
+                    elif p_info[1] == 'smallest term':
+                        a = random.randint(smallest, largest)
+                        b = random.randint(smallest, p_info[2])
                     else:
                         a = random.randint(smallest, largest)
                         b = random.randint(smallest, largest)  # Ensures sum is <= max_value
@@ -108,45 +114,54 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo):
             x = int_pairs[5*i+j][0]
             y = int_pairs[5*i+j][1]
             latex_content = latex_content + '\\Block{ \n'
+
+            if alg:
+                latex_content = latex_content + '\\vspace{-.75ex}\n'
+
+
+            latex_content = (latex_content +
+                             (  '\\[ \n'
+                                '	\\begin{array}{l r}\n'
+                                f'			& {x} \\\\\n'))
+
             if not alg:
+                if p_type == 'addition':
+                    latex_content = latex_content + f'		+ 	& {y} \\\\\n'
+                elif p_type == 'multiplication':
+                    latex_content = latex_content + f'		\\times 	& {y} \\\\\n'
+                elif p_type == 'subtraction':
+                    latex_content = latex_content + f'		-	& {y} \\\\\n'
+
                 latex_content = (latex_content +
-                                 (  '\\[ \n'
-                                    '	\\begin{array}{l r}\n'
-                                    f'			& {x} \\\\\n'))
+                                 ('	    \hline\n'
+                                  '	\end{array}\n'
+                                  '\\]\n'
+                                  '}%\n'))
+
             elif alg:
-                latex_content = (latex_content +
-                                (   '\\vspace{-.75ex}\n'
-                                    '\\[ \n'
-                                    '	\\begin{array}{l r}\n'
-                                    f'			& {x} \\\\\n'))
 
+                if p_type == 'addition':
+                    latex_content = (latex_content +
+                                     (f'		+	&  \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
+                                      '             \hline\n'
+                                      f'            & {x + y} \Tstrut \\\\\n'))
 
-            if p_type == 'addition' and not alg:
-                latex_content = latex_content + f'		+ 	& {y} \\\\\n'
-            elif p_type == 'addition' and alg:
+                elif p_type == 'subtraction':
+                    latex_content = (latex_content +
+                                     (f'		-	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
+                                      '             \hline\n'
+                                      f'            & {x - y} \Tstrut \\\\\n'))
+
+                elif p_type == 'multiplication':
+                    latex_content = (latex_content +
+                                     (f'		\\times	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
+                                      '             \hline\n'
+                                      f'            & {x * y} \Tstrut \\\\\n'))
+
                 latex_content = (latex_content +
-                                 (f'		+	&  \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
-                                  '             \hline\n'
-                                  f'            & {x + y} \Tstrut \\\\\n'
-                                  '	\end{array}\n'
-                                  '\\]\n'
-                                  '}%\n'))
-            elif p_type == 'subtraction' and not alg:
-                latex_content = latex_content + f'		-	& {y} \\\\\n'
-            elif p_type == 'subtraction' and alg:
-                latex_content = (latex_content +
-                                 (f'		-	& \\gobble{{{y}}} \\\\\n'
-                                  '             \hline\n'
-                                  f'            & {x - y} \Tstrut \\\\\n'
-                                  '	\end{array}\n'
-                                  '\\]\n'
-                                  '}%\n'))
-            if not alg:
-                latex_content = (latex_content +
-                             ('	    \hline\n'
-                              '	\end{array}\n'
-                              '\\]\n'
-                              '}%\n'))
+                                 ('	\end{array}\n'
+                                 '\\]\n'
+                                 '}%\n'))
 
         if i < rows-1:
             latex_content = latex_content + r'\par\nointerlineskip\noindent'+'\n'
@@ -155,9 +170,9 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo):
     return latex_content
 
 
-def save_latex_file(content, filename):
+def save_latex_file(content_to_write, filename):
     with open(filename, "w") as lfile:
-        lfile.write(content)
+        lfile.write(content_to_write)
 
 
 def generate_pdf(tex_file_path):
@@ -202,13 +217,13 @@ if __name__ == "__main__":
         problem_type = str.lower(field['problem-type']) #Record the type of problem.
         for topic in field['subtype']: # Cycle through the sub-fields, e.g., single digit addition.
             is_algebra = topic['algebra']
-            print(is_algebra)
+
             for worksheet in topic['worksheets']: #Cycle through the worksheets in each sub-field
                 problems = generate_problems([problem_type, worksheet['constraint-type'], worksheet['constraint']], ws_rows,
                                              ws_cols, worksheet['largest-term']) # Generate the problems.
-                latex_content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], is_algebra, logo_path) # Take generated problems and write LaTeX file
+                content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], is_algebra, logo_path) # Take generated problems and write LaTeX file
                 base_name = worksheet['filename']
-                save_latex_file(latex_content, f'{base_name}.tex') # Save the LaTeX file
+                save_latex_file(content, f'{base_name}.tex') # Save the LaTeX file
                 try:
                     generate_pdf(f'{base_name}.tex') # Run LateX to generate pdf; requires TeX-Live install on system.
                 except:
