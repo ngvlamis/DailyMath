@@ -1,13 +1,14 @@
 <h4 class="display-6 lead mb-1">Worksheets</h4>
 <p>
     The worksheets below are re-generated every day, allowing students to practice new sets of problems each day at the appropriate level.
+    Within each type of problem (e.g., addition, subtraction), the difficulty increases as you move down the list of worksheets; within a sub-type of problem, difficulty increases from left to right.
 </p>
 <div class="accordion" id="accordionExample">
   {% for type in site.data.worksheets %}
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingOne">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ type.problem-type }}" aria-expanded="true" aria-controls="collapse{{ type.problem-type }}">
-          <h5>{{ type.problem-type }} Worksheets</h5>
+          <h4>{{ type.problem-type }} Worksheets</h4>
         </button>
       </h2>
       <div id="collapse{{ type.problem-type }}" class="accordion-collapse collapse" aria-labelledby="heading{{ type.problem-type }}" data-bs-parent="#accordionExample">
@@ -15,7 +16,9 @@
 
           <ul>
             {% for subtype in type.subtype %}
-              <li><h6 class="pt-4">{{ subtype.description }}</h6>
+              <li><h5 class="pt-4 mb-0">{{ subtype.description }}</h5>
+                  <p> Format: {{ subtype.form }}</p>
+                  {% comment %}<p>{% if subtype.subdescription %} {{ subtype.subdescription }} {% endif %}</p>{% endcomment %}
 
                 <div class="btn-group pt-0">
                     {% for level in subtype.worksheets %}
