@@ -11,6 +11,8 @@
           description: a+b &le; 10
           filename: sda1
           pdf: /worksheets/sda1.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with sums up to 12.
           largest-term: 9
@@ -19,6 +21,8 @@
           description: a+b &le; 12
           filename: sda2
           pdf: /worksheets/sda2.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with sums up to 15.
           largest-term: 9
@@ -27,6 +31,8 @@
           description: a+b &le; 15
           filename: sda3
           pdf: /worksheets/sda3.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems.
           largest-term: 9
@@ -35,6 +41,8 @@
           description: a+b &le; 18
           filename: sda4
           pdf: /worksheets/sda4.pdf
+          rows: 4
+          cols: 5
 
     - description: "Fill in the blank: adding two-single digit numbers"
       form: a + blank = c; fill in the blank. (a,b &le; 9)
@@ -47,6 +55,8 @@
           description: c &le; 10
           filename: sdaa1
           pdf: /worksheets/sdaa1.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 12.
           largest-term: 9
@@ -55,6 +65,8 @@
           description: c &le; 12
           filename: sdaa2
           pdf: /worksheets/sdaa2.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 15.
           largest-term: 9
@@ -63,6 +75,8 @@
           description: c &le; 15
           filename: sdaa3
           pdf: /worksheets/sdaa3.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with a blank addend.
           largest-term: 9
@@ -71,6 +85,36 @@
           description: c &le; 18
           filename: sdaa4
           pdf: /worksheets/sdaa4.pdf
+          rows: 4
+          cols: 5
+
+    - description: Common strategies with single-digit addition
+      algebra: False
+      worksheets:
+        - latex-description: A daily worksheet practicing near doubles.
+          largest-term: 9
+          constraint-type: difference
+          constraint: 2
+          description: Near doubles
+          filename: nd
+          pdf: /worksheets/nd.pdf
+          rows: 4
+          cols: 5
+
+
+        - latex-description: >
+            A daily worksheet practicing ``make a 10 strategy''. \\
+            
+            \tiny{Instructions: Fill in the first blank and then fill in the second blank to make both equalities true}.
+          largest-term: 9
+          constraint-type: lower bound
+          constraint: 10
+          description: Make a 10
+          filename: m10
+          pdf: /worksheets/m10.pdf
+          rows: 6
+          cols: 2
+
 
 - problem-type: Subtraction
   subtype:
@@ -85,6 +129,8 @@
           description: b &le; 3
           filename: sds1
           pdf: /worksheets/sds1.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit subtraction problems, with differences \( \leq \) 3.
           largest-term: 9
@@ -93,6 +139,8 @@
           description: a-b &le; 3
           filename: sds2
           pdf: /worksheets/sds2.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit subtraction problems.
           largest-term: 9
@@ -101,6 +149,8 @@
           description: a-b &le; 9
           filename: sds3
           pdf: /worksheets/sds3.pdf
+          rows: 4
+          cols: 5
 
 - problem-type: Multiplication
   subtype:
@@ -115,6 +165,8 @@
           description: min{a,b} &le; 3
           filename: sdm1
           pdf: /worksheets/sdm1.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit multiplication problems, factors at most 5.
           largest-term: 5
@@ -123,6 +175,8 @@
           description: a,b &le; 5
           filename: sdm2
           pdf: /worksheets/sdm2.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit multiplication problems, factors at most 7.
           largest-term: 7
@@ -131,6 +185,8 @@
           description: a,b &le; 7
           filename: sdm3
           pdf: /worksheets/sdm2.pdf
+          rows: 4
+          cols: 5
 
         - latex-description: A daily worksheet of one-digit multiplication problems, factors at most 7.
           largest-term: 9
@@ -139,3 +195,5 @@
           description: a,b &le; 9
           filename: sdm4
           pdf: /worksheets/sdm4.pdf
+          rows: 4
+          cols: 5

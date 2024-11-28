@@ -17,7 +17,7 @@
           <ul>
             {% for subtype in type.subtype %}
               <li><h5 class="pt-4 mb-0">{{ subtype.description }}</h5>
-                  <p> Format: {{ subtype.form }}</p>
+                  <p>{% if subtype.form != null and subtype.form != "" %} Format: {{ subtype.form }} {% endif %} </p>
                   {% comment %}<p>{% if subtype.subdescription %} {{ subtype.subdescription }} {% endif %}</p>{% endcomment %}
 
                 <div class="btn-group pt-0">

@@ -29,7 +29,7 @@ def generate_problems(p_info, rows, cols, largest):
         elif p_info[0] == 'multiplication':
             smallest = 2
 
-        if p_info[1] in ['max', 'none', 'smallest term']:
+        if p_info[1] in ['max', 'none', 'smallest term', 'difference', 'lower bound']:
             ub = p_info[2]
             for _ in range(rows * cols):
                 a1 = a
@@ -41,6 +41,12 @@ def generate_problems(p_info, rows, cols, largest):
                     elif p_info[1] == 'smallest term':
                         a = random.randint(smallest, largest)
                         b = random.randint(smallest, p_info[2])
+                    elif p_info[1] == 'difference':
+                        a = random.randint(smallest, largest)
+                        b = random.randint(max(1,a-p_info[2]), min(a+p_info[2], largest))
+                    elif p_info[1] == 'lower bound':
+                        a = random.randint(smallest, largest)
+                        b = random.randint(p_info[2]-a, largest)
                     else:
                         a = random.randint(smallest, largest)
                         b = random.randint(smallest, largest)  # Ensures sum is <= max_value
@@ -61,7 +67,9 @@ def generate_problems(p_info, rows, cols, largest):
     return new_problems
 
 
-def create_latex(rows, cols, int_pairs, p_type, description, alg, logo):
+def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
+    box_height = str(4/(5*rows))+ r"\textheight"
+    box_width = str(1/cols)+ r"\textwidth"
     latex_content = r"""\documentclass{article}
 \usepackage[fontsize=20pt]{fontsize}
 \usepackage[letterpaper, margin=1in]{geometry}
@@ -71,7 +79,7 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo):
 \newcommand\Block[1]{%
 \setlength\fboxsep{0pt}\setlength\fboxrule{0.1pt}% delete
 \fbox{% delete
-\begin{minipage}[c][.2\textheight][t]{0.2\textwidth}
+\begin{minipage}[c][""" + box_height+ '][t]{' + box_width + r"""}
 #1
 \end{minipage}%
   }% delete
@@ -107,61 +115,66 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo):
 \noindent
 """
 
-
     for i in range(rows):
 
         for j in range(cols):
-            x = int_pairs[5*i+j][0]
-            y = int_pairs[5*i+j][1]
+            x = int_pairs[cols*i+j][0]
+            y = int_pairs[cols*i+j][1]
+
             latex_content = latex_content + '\\Block{ \n'
 
-            if alg:
-                latex_content = latex_content + '\\vspace{-.75ex}\n'
+            if fname == 'm10':
+                latex_content = latex_content + f'\[ {x} + {y} = 10 + \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} = \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} \] \n}}%\n'
 
+            else:
 
-            latex_content = (latex_content +
-                             (  '\\[ \n'
-                                '	\\begin{array}{l r}\n'
-                                f'			& {x} \\\\\n'))
+                if alg:
+                    latex_content = latex_content + '\\vspace{-.75ex}\n'
 
-            if not alg:
-                if p_type == 'addition':
-                    latex_content = latex_content + f'		+ 	& {y} \\\\\n'
-                elif p_type == 'multiplication':
-                    latex_content = latex_content + f'		\\times 	& {y} \\\\\n'
-                elif p_type == 'subtraction':
-                    latex_content = latex_content + f'		-	& {y} \\\\\n'
 
                 latex_content = (latex_content +
-                                 ('	    \hline\n'
-                                  '	\end{array}\n'
-                                  '\\]\n'
-                                  '}%\n'))
+                                 (  '\\[ \n'
+                                    '	\\begin{array}{l r}\n'
+                                    f'			& {x} \\\\\n'))
 
-            elif alg:
+                if not alg:
+                    if p_type == 'addition':
+                        latex_content = latex_content + f'		+ 	& {y} \\\\\n'
+                    elif p_type == 'multiplication':
+                        latex_content = latex_content + f'		\\times 	& {y} \\\\\n'
+                    elif p_type == 'subtraction':
+                        latex_content = latex_content + f'		-	& {y} \\\\\n'
 
-                if p_type == 'addition':
                     latex_content = (latex_content +
-                                     (f'		+	&  \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
-                                      '             \hline\n'
-                                      f'            & {x + y} \Tstrut \\\\\n'))
+                                     ('	    \hline\n'
+                                      '	\end{array}\n'
+                                      '\\]\n'
+                                      '}%\n'))
 
-                elif p_type == 'subtraction':
+                elif alg:
+
+                    if p_type == 'addition':
+                        latex_content = (latex_content +
+                                         (f'		+	&  \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
+                                          '             \hline\n'
+                                          f'            & {x + y} \Tstrut \\\\\n'))
+
+                    elif p_type == 'subtraction':
+                        latex_content = (latex_content +
+                                         (f'		-	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
+                                          '             \hline\n'
+                                          f'            & {x - y} \Tstrut \\\\\n'))
+
+                    elif p_type == 'multiplication':
+                        latex_content = (latex_content +
+                                         (f'		\\times	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
+                                          '             \hline\n'
+                                          f'            & {x * y} \Tstrut \\\\\n'))
+
                     latex_content = (latex_content +
-                                     (f'		-	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
-                                      '             \hline\n'
-                                      f'            & {x - y} \Tstrut \\\\\n'))
-
-                elif p_type == 'multiplication':
-                    latex_content = (latex_content +
-                                     (f'		\\times	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
-                                      '             \hline\n'
-                                      f'            & {x * y} \Tstrut \\\\\n'))
-
-                latex_content = (latex_content +
-                                 ('	\end{array}\n'
-                                 '\\]\n'
-                                 '}%\n'))
+                                     ('	\end{array}\n'
+                                     '\\]\n'
+                                     '}%\n'))
 
         if i < rows-1:
             latex_content = latex_content + r'\par\nointerlineskip\noindent'+'\n'
@@ -196,10 +209,6 @@ if __name__ == "__main__":
 
     # Generate pdf worksheets based on config file.
 
-    # Set the number of columns and rows for the worksheet.
-    ws_rows = 4
-    ws_cols = 5
-
     # Set default paths
     current_directory = os.getcwd() # Get the current working directory
     project_directory = os.path.abspath(os.path.join(current_directory, "..")) # Go one step back to the parent directory
@@ -219,9 +228,13 @@ if __name__ == "__main__":
             is_algebra = topic['algebra']
 
             for worksheet in topic['worksheets']: #Cycle through the worksheets in each sub-field
+                # Get the number of columns and rows for the worksheet.
+                ws_rows = worksheet['rows']
+                ws_cols = worksheet['cols']
+
                 problems = generate_problems([problem_type, worksheet['constraint-type'], worksheet['constraint']], ws_rows,
                                              ws_cols, worksheet['largest-term']) # Generate the problems.
-                content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], is_algebra, logo_path) # Take generated problems and write LaTeX file
+                content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], is_algebra, logo_path, worksheet['filename']) # Take generated problems and write LaTeX file
                 base_name = worksheet['filename']
                 save_latex_file(content, f'{base_name}.tex') # Save the LaTeX file
                 try:
