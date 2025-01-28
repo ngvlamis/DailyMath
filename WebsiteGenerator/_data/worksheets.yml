@@ -6,8 +6,8 @@
       worksheets:
         - latex-description: A daily worksheet of one-digit addition problems, with sums up to 10.
           largest-term: 9
-          constraint-type: none
-          constraint: 0
+          constraint-type: max
+          constraint: 10
           description: a+b &le; 10
           filename: sda1
           pdf: /worksheets/sda1.pdf
@@ -114,6 +114,20 @@
           pdf: /worksheets/m10.pdf
           rows: 6
           cols: 2
+
+    - description: Adding two two-digit numbers
+      form: a + b = blank; fill in the blank. (a,b &le; 99)
+      algebra: False
+      worksheets:
+        - latex-description: A daily worksheet of adding a single-digit and a two-digit number, with sums less than 30.
+          largest-term: 9
+          constraint-type: none
+          constraint: 0
+          description: a+b &le; 10
+          filename: sda1
+          pdf: /worksheets/sda1.pdf
+          rows: 4
+          cols: 5
 
 
 - problem-type: Subtraction
