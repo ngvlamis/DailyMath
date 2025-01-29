@@ -5,9 +5,11 @@
       algebra: False
       worksheets:
         - latex-description: A daily worksheet of one-digit addition problems, with sums up to 10.
-          largest-term: 9
-          constraint-type: none
-          constraint: 0
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: max
+              value: 10
           description: a+b &le; 10
           filename: sda1
           pdf: /worksheets/sda1.pdf
@@ -15,9 +17,11 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with sums up to 12.
-          largest-term: 9
-          constraint-type: max
-          constraint: 12
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: max
+              value: 12
           description: a+b &le; 12
           filename: sda2
           pdf: /worksheets/sda2.pdf
@@ -25,9 +29,11 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with sums up to 15.
-          largest-term: 9
-          constraint-type: max
-          constraint: 15
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: max
+              value: 15
           description: a+b &le; 15
           filename: sda3
           pdf: /worksheets/sda3.pdf
@@ -35,9 +41,11 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems.
-          largest-term: 9
-          constraint-type: max
-          constraint: 20
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: max
+              value: 20
           description: a+b &le; 18
           filename: sda4
           pdf: /worksheets/sda4.pdf
@@ -49,9 +57,11 @@
       algebra: True
       worksheets:
         - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 10.
-          largest-term: 9
-          constraint-type: max
-          constraint: 10
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: max
+              value: 10
           description: c &le; 10
           filename: sdaa1
           pdf: /worksheets/sdaa1.pdf
@@ -59,9 +69,11 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 12.
-          largest-term: 9
-          constraint-type: max
-          constraint: 12
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: max
+              value: 12
           description: c &le; 12
           filename: sdaa2
           pdf: /worksheets/sdaa2.pdf
@@ -69,9 +81,11 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 15.
-          largest-term: 9
-          constraint-type: max
-          constraint: 15
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: max
+              value: 15
           description: c &le; 15
           filename: sdaa3
           pdf: /worksheets/sdaa3.pdf
@@ -79,9 +93,11 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit addition problems, with a blank addend.
-          largest-term: 9
-          constraint-type: max
-          constraint: 20
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: max
+              value: 20
           description: c &le; 18
           filename: sdaa4
           pdf: /worksheets/sdaa4.pdf
@@ -92,29 +108,91 @@
       algebra: False
       worksheets:
         - latex-description: A daily worksheet practicing near doubles.
-          largest-term: 9
-          constraint-type: difference
-          constraint: 2
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: difference
+              value: 2
           description: Near doubles
           filename: nd
           pdf: /worksheets/nd.pdf
           rows: 4
           cols: 5
 
-
         - latex-description: >
             A daily worksheet practicing ``make a 10 strategy''. \\
             
             \tiny{Instructions: Fill in the first blank and then fill in the second blank to make both equalities true}.
-          largest-term: 9
-          constraint-type: lower bound
-          constraint: 10
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: lower bound
+              value: 10
           description: Make a 10
           filename: m10
           pdf: /worksheets/m10.pdf
           rows: 6
           cols: 2
 
+    - description: Adding two two-digit numbers less than 20
+      form: a + b = blank; fill in the blank. (a,b &le; 99)
+      algebra: False
+      worksheets:
+        - latex-description: A daily worksheet of adding a single-digit and a two-digit number, with sums less than 30.
+          constraints:
+            - type: largest-term
+              value: 19
+            - type: largest term lower
+              value: 10
+            - type: smallest term
+              value: 9
+          description: 10 &le;a < 20, b<10
+          filename: dda1
+          pdf: /worksheets/dda1.pdf
+          rows: 4
+          cols: 5
+
+        - latex-description: A daily worksheet of adding a two-digit number and a number at most 12.
+          constraints:
+            - type: largest-term
+              value: 19
+            - type: largest term lower
+              value: 10
+            - type: smallest term
+              value: 12
+          description: 10 &le;a < 20, b<12
+          filename: dda2
+          pdf: /worksheets/dda2.pdf
+          rows: 4
+          cols: 5
+
+        - latex-description: A daily worksheet of adding a two-digit number and a number at most 15.
+          constraints:
+            - type: largest-term
+              value: 19
+            - type: largest term lower
+              value: 10
+            - type: smallest term
+              value: 12
+          description: 10 &le;a < 20, b<15
+          filename: dda1
+          pdf: /worksheets/dda3.pdf
+          rows: 4
+          cols: 5
+
+        - latex-description: A daily worksheet of adding a two-digit number and a number at most 20.
+          constraints:
+            - type: largest-term
+              value: 19
+            - type: largest term lower
+              value: 10
+            - type: smallest term
+              value: 12
+          description: 10 &le;a < 20, b &le; 20
+          filename: dda1
+          pdf: /worksheets/dda4.pdf
+          rows: 4
+          cols: 5
 
 - problem-type: Subtraction
   subtype:
@@ -123,9 +201,11 @@
       algebra: False
       worksheets:
         - latex-description: A daily worksheet of one-digit subtraction problems, with the smaller digit at most 3.
-          largest-term: 9
-          constraint-type: smallest term
-          constraint: 3
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: smallest term
+              value: 3
           description: b &le; 3
           filename: sds1
           pdf: /worksheets/sds1.pdf
@@ -133,9 +213,11 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit subtraction problems, with differences \( \leq \) 3.
-          largest-term: 9
-          constraint-type: difference
-          constraint: 3
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: difference
+              value: 3
           description: a-b &le; 3
           filename: sds2
           pdf: /worksheets/sds2.pdf
@@ -143,9 +225,11 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit subtraction problems.
-          largest-term: 9
-          constraint-type: difference
-          constraint: 9
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: difference
+              value: 9
           description: a-b &le; 9
           filename: sds3
           pdf: /worksheets/sds3.pdf
@@ -159,9 +243,11 @@
       algebra: False
       worksheets:
         - latex-description: A daily worksheet of one-digit multiplication problems, with one factor at most 3.
-          largest-term: 9
-          constraint-type: smallest term
-          constraint: 3
+          constraints:
+            - type: largest-term
+              value: 9
+            - type: smallest term
+              value: 3
           description: min{a,b} &le; 3
           filename: sdm1
           pdf: /worksheets/sdm1.pdf
@@ -169,9 +255,9 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit multiplication problems, factors at most 5.
-          largest-term: 5
-          constraint-type: none
-          constraint: 0
+          constraints:
+            - type: largest-term
+              value: 5
           description: a,b &le; 5
           filename: sdm2
           pdf: /worksheets/sdm2.pdf
@@ -179,9 +265,9 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit multiplication problems, factors at most 7.
-          largest-term: 7
-          constraint-type: none
-          constraint: 0
+          constraints:
+            - type: largest-term
+              value: 7
           description: a,b &le; 7
           filename: sdm3
           pdf: /worksheets/sdm2.pdf
@@ -189,9 +275,9 @@
           cols: 5
 
         - latex-description: A daily worksheet of one-digit multiplication problems, factors at most 7.
-          largest-term: 9
-          constraint-type: none
-          constraint: 0
+          constraints:
+            - type: largest-term
+              value: 9
           description: a,b &le; 9
           filename: sdm4
           pdf: /worksheets/sdm4.pdf

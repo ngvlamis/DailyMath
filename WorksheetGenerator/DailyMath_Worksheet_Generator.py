@@ -19,17 +19,24 @@
 
 import random, os, subprocess, shutil, glob, yaml
 
-def generate_problems(p_info, rows, cols, largest):
+def generate_problems(p_type, constraints, rows, cols):
     new_problems = []
     a = 0
     b = 0
-    if p_info[0] in ['addition','multiplication']:
-        if p_info[0] == 'addition':
-            smallest = 1
-        elif p_info[0] == 'multiplication':
-            smallest = 2
+    # Extract the value for "largest-term"
+    #largest = next((c["value"] for c in constraints if c["type"] == "largest-term"), None)
 
-        if p_info[1] in ['max', 'none', 'smallest term', 'difference', 'lower bound']:
+    # Convert constraints to a dictionary
+    constraint_dict = {c["type"]: c["value"] for c in constraints}
+    largest = constraint_dict.get("largest-term")
+
+    if p_type in ['addition','multiplication']:
+        if p_type == 'addition':
+            smallest = 1
+        elif p_type == 'multiplication':
+            smallest = 2
+        if any(c in constraint_dict for c in {'max', 'none', 'smallest term', 'difference', 'lower bound'}):
+        #if (any(c["type"] in {'max', 'none', 'smallest term', 'difference', 'lower bound'} for c in constraints)):
             ub = p_info[2]
             for _ in range(rows * cols):
                 a1 = a
@@ -40,13 +47,13 @@ def generate_problems(p_info, rows, cols, largest):
                         b = random.randint(smallest, min(largest, ub - a))  # Ensures sum is <= max_value
                     elif p_info[1] == 'smallest term':
                         a = random.randint(smallest, largest)
-                        b = random.randint(smallest, p_info[2])
+                        b = random.randint(smallest, ub)
                     elif p_info[1] == 'difference':
                         a = random.randint(smallest, largest)
-                        b = random.randint(max(1,a-p_info[2]), min(a+p_info[2], largest))
+                        b = random.randint(max(1,a-ub), min(a+ub, largest))
                     elif p_info[1] == 'lower bound':
                         a = random.randint(smallest, largest)
-                        b = random.randint(p_info[2]-a, largest)
+                        b = random.randint(ub-a, largest)
                     else:
                         a = random.randint(smallest, largest)
                         b = random.randint(smallest, largest)  # Ensures sum is <= max_value
@@ -229,27 +236,24 @@ if __name__ == "__main__":
 
             for worksheet in topic['worksheets']: #Cycle through the worksheets in each sub-field
                 # Get the number of columns and rows for the worksheet.
-                ws_rows = worksheet['rows']
-                ws_cols = worksheet['cols']
 
-                problems = generate_problems([problem_type, worksheet['constraint-type'], worksheet['constraint']], ws_rows,
-                                             ws_cols, worksheet['largest-term']) # Generate the problems.
-                content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], is_algebra, logo_path, worksheet['filename']) # Take generated problems and write LaTeX file
-                base_name = worksheet['filename']
-                save_latex_file(content, f'{base_name}.tex') # Save the LaTeX file
-                try:
-                    generate_pdf(f'{base_name}.tex') # Run LateX to generate pdf; requires TeX-Live install on system.
-                except:
-                    print(f'PDF generation of {base_name}.tex failed.  Check to make sure you have Tex Live installed.')
-                    break
-                source_path=f'{base_name}.pdf'
-                destination_path = pdf_destination + f'{base_name}.pdf'
-                shutil.move(source_path, destination_path) # Move pdfs to appropriate folder.
-
-    try:
-        delete_aux_files('') # Delete all the non-pdfs files generated during the process.
-        print("=" * 60)
-        print('Auxiliary files deleted successfully.')
-    except:
-        print("=" * 60)
-        print('Deleting auxiliary files failed.')
+                problems = generate_problems(problem_type, worksheet['constraints'], worksheet['rows'], worksheet['cols']) # Generate the problems.
+    #             content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], is_algebra, logo_path, worksheet['filename']) # Take generated problems and write LaTeX file
+    #             base_name = worksheet['filename']
+    #             save_latex_file(content, f'{base_name}.tex') # Save the LaTeX file
+    #             try:
+    #                 generate_pdf(f'{base_name}.tex') # Run LateX to generate pdf; requires TeX-Live install on system.
+    #             except:
+    #                 print(f'PDF generation of {base_name}.tex failed.  Check to make sure you have Tex Live installed.')
+    #                 break
+    #             source_path=f'{base_name}.pdf'
+    #             destination_path = pdf_destination + f'{base_name}.pdf'
+    #             shutil.move(source_path, destination_path) # Move pdfs to appropriate folder.
+    #
+    # try:
+    #     delete_aux_files('') # Delete all the non-pdfs files generated during the process.
+    #     print("=" * 60)
+    #     print('Auxiliary files deleted successfully.')
+    # except:
+    #     print("=" * 60)
+    #     print('Deleting auxiliary files failed.')
