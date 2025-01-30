@@ -19,50 +19,94 @@
 
 import random, os, subprocess, shutil, glob, yaml
 
-def generate_problems(p_info, rows, cols, largest):
+def generate_problems(p_type, constraints, rows, cols):
+    # Initialize variables
     new_problems = []
     a = 0
     b = 0
-    if p_info[0] in ['addition','multiplication']:
-        if p_info[0] == 'addition':
-            smallest = 1
-        elif p_info[0] == 'multiplication':
-            smallest = 2
+    offset = 0
 
-        if p_info[1] in ['max', 'none', 'smallest term', 'difference', 'lower bound']:
-            ub = p_info[2]
-            for _ in range(rows * cols):
-                a1 = a
-                b1 = b
-                while a1 == a and b1 == b:  # Ensure the same problem does not appear twice in a row
-                    if p_info[1] == 'max':
-                        a = random.randint(smallest, min(largest, ub))
-                        b = random.randint(smallest, min(largest, ub - a))  # Ensures sum is <= max_value
-                    elif p_info[1] == 'smallest term':
-                        a = random.randint(smallest, largest)
-                        b = random.randint(smallest, p_info[2])
-                    elif p_info[1] == 'difference':
-                        a = random.randint(smallest, largest)
-                        b = random.randint(max(1,a-p_info[2]), min(a+p_info[2], largest))
-                    elif p_info[1] == 'lower bound':
-                        a = random.randint(smallest, largest)
-                        b = random.randint(p_info[2]-a, largest)
-                    else:
-                        a = random.randint(smallest, largest)
-                        b = random.randint(smallest, largest)  # Ensures sum is <= max_value
-                new_problems.append((a, b))
+    if p_type in ['addition','subtraction']:
+        smallest = 1
 
-    elif p_info[0]=='subtraction':
-        for _ in range(rows * cols):
-            a1 = a
-            b1 = b
-            while a1 == a and b1 == b: #Ensure the same problem does not appear twice in a row
-                a = random.randint(2, largest)
-                if p_info[1] == 'smallest term':
-                    b = random.randint(1, min(p_info[2],a - 1))  # Ensures the term being subtracted is at most p_info[2].
-                elif p_info[1] == 'difference':
-                    b = random.randint(max(1, a - p_info[2]), a - 1)  # Ensures the difference is at most p_info[2]
+        if p_type == 'subtraction':
+            offset = 1
+        # largest = constraints.get("largest-term") - offset
+
+    elif p_type == 'multiplication':
+        smallest = 2
+        # largest = constraints.get("largest-term")
+
+    largest = constraints.get("largest-term")
+
+
+    # Set lower bound on first term
+    if 'largest term lower' in constraints:
+        flb = constraints['largest term lower']  # Set the lower bound for the first term
+    else:
+        flb = 0
+
+
+        #if any(c in constraint_dict for c in {'max', 'none', 'smallest term', 'difference', 'lower bound'}):
+        #if (any(c["type"] in {'max', 'none', 'smallest term', 'difference', 'lower bound'} for c in constraints)):
+
+    for _ in range(rows * cols):
+        #Initialize variable to check for repeat neighbors.
+        a1 = a
+        b1 = b
+
+        while a1 == a and b1 == b:  # Ensure the same problem does not appear twice in a row
+
+            if 'max' in constraints:
+                m = constraints['max']
+                a = random.randint(max(smallest+offset, flb), min(largest, m))
+                b = random.randint(smallest, min(largest, m - a))  # Ensures sum is <= max_value
+            else:
+                a = random.randint(max(flb, smallest+offset), largest)
+
+            if 'smallest term' in constraints:
+                if p_type =='subtraction':
+                    sterm = min(constraints['smallest term'], a-1)
+                else:
+                    sterm = constraints['smallest term']
+            else:
+                if p_type == 'subtraction':
+                    sterm = a-1
+                else:
+                    sterm = largest
+
+            if 'difference' in constraints:
+                diff = constraints['difference']
+                if p_type == 'subtraction':
+                    b = random.randint(max(smallest, a - diff), sterm)  # Ensures the difference is at most diff
+                else:
+                    b = random.randint(max(smallest,a-diff), min(a+diff, largest))
+            elif 'lower bound' in constraints:
+                lb = constraints['lower bound']
+                b = random.randint(lb-a, largest)
+            else:
+                b = random.randint(smallest, sterm)
+
             new_problems.append((a, b))
+
+        # if p_type in {'addition', 'multiplication'}:
+        #     new_problems.append((a, b))
+        # elif p_type == 'subtraction':
+        #     new_problems.append((a+b, random.choice([a,b])))
+
+    # elif p_type=='subtraction':
+    #     for _ in range(rows * cols):
+    #         a1 = a
+    #         b1 = b
+    #         while a1 == a and b1 == b: #Ensure the same problem does not appear twice in a row
+    #             a = random.randint(max(flb,2), largest)
+    #             if 'smallest term' in constraints:
+    #                 sterm = constraints['smallest term']
+    #                 b = random.randint(1, min(sterm,a - 1))  # Ensures the term being subtracted is at most p_info[2].
+    #             elif 'difference' in constraints:
+    #                 diff = constraints['difference']
+    #                 b = random.randint(max(1, a - diff), a - 1)  # Ensures the difference is at most p_info[2]
+    #         new_problems.append((a, b))
 
     return new_problems
 
@@ -225,25 +269,30 @@ if __name__ == "__main__":
     for field in config: #Cylce through the types of problems, e.g., addition, subtraction, etc.
         problem_type = str.lower(field['problem-type']) #Record the type of problem.
         for topic in field['subtype']: # Cycle through the sub-fields, e.g., single digit addition.
-            is_algebra = topic['algebra']
+            if 'algebra' in topic:
+                is_algebra = topic['algebra']
+            else:
+                is_algebra = False
 
             for worksheet in topic['worksheets']: #Cycle through the worksheets in each sub-field
-                # Get the number of columns and rows for the worksheet.
+                
                 ws_rows = worksheet['rows']
-                ws_cols = worksheet['cols']
+                ws_columns = worksheet['cols']
+                ws_constraints = worksheet['constraints']
+                ws_description = worksheet['latex-description']
+                ws_filename = worksheet['filename']
 
-                problems = generate_problems([problem_type, worksheet['constraint-type'], worksheet['constraint']], ws_rows,
-                                             ws_cols, worksheet['largest-term']) # Generate the problems.
-                content = create_latex(ws_rows, ws_cols, problems, problem_type, worksheet['latex-description'], is_algebra, logo_path, worksheet['filename']) # Take generated problems and write LaTeX file
-                base_name = worksheet['filename']
-                save_latex_file(content, f'{base_name}.tex') # Save the LaTeX file
+                problems = generate_problems(problem_type, ws_constraints, ws_rows, ws_columns) # Generate the problems.
+                content = create_latex(ws_rows, ws_columns, problems, problem_type, ws_description, is_algebra, logo_path, ws_filename) # Take generated problems and write LaTeX file
+                ws_filename = worksheet['filename']
+                save_latex_file(content, f'{ws_filename}.tex') # Save the LaTeX file
                 try:
-                    generate_pdf(f'{base_name}.tex') # Run LateX to generate pdf; requires TeX-Live install on system.
+                    generate_pdf(f'{ws_filename}.tex') # Run LateX to generate pdf; requires TeX-Live install on system.
                 except:
-                    print(f'PDF generation of {base_name}.tex failed.  Check to make sure you have Tex Live installed.')
+                    print(f'PDF generation of {ws_filename}.tex failed.  Check to make sure you have Tex Live installed.')
                     break
-                source_path=f'{base_name}.pdf'
-                destination_path = pdf_destination + f'{base_name}.pdf'
+                source_path=f'{ws_filename}.pdf'
+                destination_path = pdf_destination + f'{ws_filename}.pdf'
                 shutil.move(source_path, destination_path) # Move pdfs to appropriate folder.
 
     try:
