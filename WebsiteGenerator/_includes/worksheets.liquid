@@ -6,7 +6,7 @@
 <div class="accordion" id="accordionExample">
   {% for type in site.data.worksheets %}
     <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
+      <h2 class="accordion-header" id="ws{{ forloop.index }}">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ type.problem-type }}" aria-expanded="true" aria-controls="collapse{{ type.problem-type }}">
           <h4>{{ type.problem-type }} Worksheets</h4>
         </button>

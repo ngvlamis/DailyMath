@@ -3,7 +3,7 @@
 <div class="accordion" id="InfoAccordion">
   {% for type in site.data.information %}
     <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
+      <h2 class="accordion-header" id="info{{ forloop.index }}">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ type.info-type }}" aria-expanded="true" aria-controls="collapse{{ type.info-type }}">
           <h5>{{ type.description }}</h5>
         </button>
