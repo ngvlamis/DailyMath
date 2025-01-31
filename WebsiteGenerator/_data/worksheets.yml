@@ -114,7 +114,7 @@
           rows: 6
           cols: 2
 
-    - description: Adding two two-digit numbers less than 20
+    - description: Adding two numbers &le; 20
       form: a + b = blank; fill in the blank. (a,b &le; 20)
       algebra: False
       worksheets:
@@ -123,7 +123,7 @@
             largest-term: 20
             largest term lower: 10
             smallest term: 9
-          description: 10 &le;a < 20, b<10
+          description: 10 &le;a &le; 20, b < 10
           filename: dda1
           pdf: /worksheets/dda1.pdf
           rows: 4
@@ -134,7 +134,7 @@
             largest-term: 20
             largest term lower: 10
             smallest term: 12
-          description: 10 &le;a < 20, b<12
+          description: 10 &le;a &le; 20, b &le; 12
           filename: dda2
           pdf: /worksheets/dda2.pdf
           rows: 4
@@ -145,18 +145,18 @@
             largest-term: 20
             largest term lower: 10
             smallest term: 15
-          description: 10 &le;a < 20, b<15
+          description: 10 &le;a &le; 20, b &le; 15
           filename: dda3
           pdf: /worksheets/dda3.pdf
           rows: 4
           cols: 5
 
-        - latex-description: A daily worksheet of adding a two-digit number at most 20 and a number at most 20.
+        - latex-description: A daily worksheet of adding two numbers, each at most 20.
           constraints:
             largest-term: 20
             largest term lower: 10
             smallest term: 20
-          description: 10 &le;a < 20, b &le; 20
+          description: a, b &le; 20
           filename: dda4
           pdf: /worksheets/dda4.pdf
           rows: 4
@@ -198,7 +198,7 @@
           rows: 4
           cols: 5
 
-    - description: Subtracting a single-digit number from a double-digit number, resulting in a single-digit number.
+    - description: Subtracting two digit numbers less than 20.
       form: a - b = blank; fill in the blank. (10<a<19, b-a < 10 )
       algebra: False
       worksheets:

@@ -60,7 +60,6 @@ def generate_problems(p_type, constraints, rows, cols):
             if 'max' in constraints:
                 m = constraints['max']
                 a = random.randint(max(smallest+offset, flb), min(largest, m))
-                b = random.randint(smallest, min(largest, m - a))  # Ensures sum is <= max_value
             else:
                 a = random.randint(max(flb, smallest+offset), largest)
 
@@ -84,6 +83,8 @@ def generate_problems(p_type, constraints, rows, cols):
             elif 'lower bound' in constraints:
                 lb = constraints['lower bound']
                 b = random.randint(lb-a, largest)
+            elif 'max' in constraints:
+                b = random.randint(smallest, min(largest, m - a))  # Ensures sum is <= max_value
             else:
                 b = random.randint(smallest, sterm)
 
