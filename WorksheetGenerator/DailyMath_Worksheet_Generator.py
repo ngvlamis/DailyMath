@@ -24,19 +24,23 @@ def generate_problems(p_type, constraints, rows, cols):
     new_problems = []
     a = 0
     b = 0
-    offset = 0
+
+    if p_type == 'subtraction':
+        offset = 1
+    else:
+        offset = 0
+
 
     if p_type in ['addition','subtraction']:
         smallest = 1
-
-        if p_type == 'subtraction':
-            offset = 1
-        # largest = constraints.get("largest-term") - offset
-
     elif p_type == 'multiplication':
         smallest = 2
-        # largest = constraints.get("largest-term")
 
+    if 'smallest term lower' in constraints:
+        slb = constraints['smallest term lower']
+    else:
+        slb = smallest
+    print([slb,smallest])
     largest = constraints.get("largest-term")
 
 
@@ -59,9 +63,9 @@ def generate_problems(p_type, constraints, rows, cols):
 
             if 'max' in constraints:
                 m = constraints['max']
-                a = random.randint(max(smallest+offset, flb), min(largest, m))
+                a = random.SystemRandom().randint(max(smallest+offset, flb), min(largest, m))
             else:
-                a = random.randint(max(flb, smallest+offset), largest)
+                a = random.SystemRandom().randint(max(flb, smallest+offset), largest)
 
             if 'smallest term' in constraints:
                 if p_type =='subtraction':
@@ -77,18 +81,19 @@ def generate_problems(p_type, constraints, rows, cols):
             if 'difference' in constraints:
                 diff = constraints['difference']
                 if p_type == 'subtraction':
-                    b = random.randint(max(smallest, a - diff), sterm)  # Ensures the difference is at most diff
+                    b = random.SystemRandom().randint(max(slb, a - diff), sterm)  # Ensures the difference is at most diff
                 else:
-                    b = random.randint(max(smallest,a-diff), min(a+diff, largest))
+                    b = random.SystemRandom().randint(max(slb,a-diff), min(a+diff, largest))
             elif 'lower bound' in constraints:
                 lb = constraints['lower bound']
-                b = random.randint(lb-a, largest)
+                b = random.SystemRandom().randint(lb-a, largest)
             elif 'max' in constraints:
-                b = random.randint(smallest, min(largest, m - a))  # Ensures sum is <= max_value
+                b = random.SystemRandom().randint(slb, min(largest, m - a))  # Ensures sum is <= max_value
             else:
-                b = random.randint(smallest, sterm)
+                print([slb,sterm])
+                b = random.SystemRandom().randint(slb, sterm)
 
-            new_problems.append((a, b))
+        new_problems.append((a, b))
 
         # if p_type in {'addition', 'multiplication'}:
         #     new_problems.append((a, b))
@@ -100,13 +105,13 @@ def generate_problems(p_type, constraints, rows, cols):
     #         a1 = a
     #         b1 = b
     #         while a1 == a and b1 == b: #Ensure the same problem does not appear twice in a row
-    #             a = random.randint(max(flb,2), largest)
+    #             a = random.SystemRandom().randint(max(flb,2), largest)
     #             if 'smallest term' in constraints:
     #                 sterm = constraints['smallest term']
-    #                 b = random.randint(1, min(sterm,a - 1))  # Ensures the term being subtracted is at most p_info[2].
+    #                 b = random.SystemRandom().randint(1, min(sterm,a - 1))  # Ensures the term being subtracted is at most p_info[2].
     #             elif 'difference' in constraints:
     #                 diff = constraints['difference']
-    #                 b = random.randint(max(1, a - diff), a - 1)  # Ensures the difference is at most p_info[2]
+    #                 b = random.SystemRandom().randint(max(1, a - diff), a - 1)  # Ensures the difference is at most p_info[2]
     #         new_problems.append((a, b))
 
     return new_problems

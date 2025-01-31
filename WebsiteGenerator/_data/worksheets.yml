@@ -202,7 +202,7 @@
       form: a - b = blank; fill in the blank. (a,b &le; 20)
       algebra: False
       worksheets:
-        - latex-description: A daily worksheet of substracting a single-digit number from a two digit-number that results in a single-digit number.
+        - latex-description: A daily worksheet substracting a single-digit number from a two digit-number, with result less than 10.
           constraints:
             largest-term: 14
             largest term lower: 11
@@ -214,7 +214,7 @@
           rows: 4
           cols: 5
 
-        - latex-description: A daily worksheet of subtracting a single-digit number from a two digit-number that results in a single-digit number.
+        - latex-description: A daily worksheet substracting a single-digit number from a two digit-number, with result less than 10.
           constraints:
             largest-term: 18
             largest term lower: 11
@@ -223,6 +223,27 @@
           description: a &le; 18, b &lt; 10, a-b &lt; 10
           filename: dds2
           pdf: /worksheets/dds2.pdf
+          rows: 4
+          cols: 5
+
+        - latex-description: A daily worksheet of subtracting two numbers, each between 10 and 20.
+          constraints:
+            largest-term: 20
+            largest term lower: 10
+            smallest term: 20
+            smallest term lower: 10
+          description: 10 &le; a,b &le; 20
+          filename: dds3
+          pdf: /worksheets/dds3.pdf
+          rows: 4
+          cols: 5
+
+        - latex-description: A daily worksheet of subtracting two numbers, each at most 20.
+          constraints:
+            largest-term: 20
+          description: a,b &le; 20
+          filename: dds4
+          pdf: /worksheets/dds4.pdf
           rows: 4
           cols: 5
 
