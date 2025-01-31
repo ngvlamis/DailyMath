@@ -13,7 +13,7 @@ def copy_folder_contents(src, dst):
             shutil.copy2(s, d)
 
 if __name__ == "__main__":
-    src_folder = 'WebsiteGenerator/_site'
     dst_folder = os.getcwd()
+    src_folder = os.path.join(dst_folder,'WebsiteGenerator/_site')
     copy_folder_contents(src_folder, dst_folder)
     print(f"Regenerated website")
