@@ -166,15 +166,47 @@
       form: a + b + c = blank; fill in the blank. (a,b,c < 10)
       algebra: False
       worksheets:
-        - latex-description: A daily worksheet of addding three single-digit numbers.
+        - latex-description: A daily worksheet of addding three single-digit numbers, each at most 5.
           number of terms: 3
           constraints:
-            largest-term: 9
-          description: a,b,c < 10
+            largest-term: 5
+          description: a,b,c &le; 5
           filename: tda1
           pdf: /worksheets/tda1.pdf
           rows: 4
           cols: 5
+        - latex-description: A daily worksheet of addding three single-digit numbers, with sum at most 15.
+          number of terms: 3
+          constraints:
+            largest-term: 9
+            max: 15
+          description: a+b+c &le; 15         
+          filename: tda2
+          pdf: /worksheets/tda2.pdf
+          rows: 4
+          cols: 5
+        - latex-description: A daily worksheet of addding three single-digit numbers, with sum at most 20.
+          number of terms: 3
+          constraints:
+            largest-term: 9
+            max: 20
+          description: a+b+c &le; 20         
+          filename: tda3
+          pdf: /worksheets/tda3.pdf
+          rows: 4
+          cols: 5
+        - latex-description: A daily worksheet of addding three single-digit numbers.
+          number of terms: 3
+          constraints:
+            largest-term: 9
+            max: 20
+          description: a+b+c &le; 20         
+          filename: tda4
+          pdf: /worksheets/tda4.pdf
+          rows: 4
+          cols: 5
+
+
 
 - problem-type: Subtraction
   subtype:
