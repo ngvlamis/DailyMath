@@ -19,12 +19,11 @@
 
 import random, os, subprocess, shutil, glob, yaml
 
-def generate_problems(p_type, constraints, rows, cols):
+def generate_problems(p_type, constraints, rows, cols, num_terms=2):
     # Initialize variables
     new_problems = []
-    a = 0
-    b = 0
-
+     terms = [0]*num_terms
+ 
     if p_type == 'subtraction':
         offset = 1
     else:
@@ -56,63 +55,46 @@ def generate_problems(p_type, constraints, rows, cols):
 
     for _ in range(rows * cols):
         #Initialize variable to check for repeat neighbors.
-        a1 = a
-        b1 = b
-
-        while a1 == a and b1 == b:  # Ensure the same problem does not appear twice in a row
-
+        terms1 = terms
+   
+        while terms1 == terms:  # Ensure the same problem does not appear twice in a row
+            
+            # Get first term
             if 'max' in constraints:
                 m = constraints['max']
-                a = random.SystemRandom().randint(max(smallest+offset, flb), min(largest, m))
+                terms[0] = random.SystemRandom().randint(max(smallest+offset, flb), min(largest, m))
             else:
-                a = random.SystemRandom().randint(max(flb, smallest+offset), largest)
+                terms[0] = random.SystemRandom().randint(max(flb, smallest+offset), largest)
 
             if 'smallest term' in constraints:
                 if p_type =='subtraction':
-                    sterm = min(constraints['smallest term'], a-1)
+                    sterm = min(constraints['smallest term'], terms[0]-1)
                 else:
                     sterm = constraints['smallest term']
             else:
                 if p_type == 'subtraction':
-                    sterm = a-1
+                    sterm = terms[0]-1
                 else:
                     sterm = largest
-
-            if 'difference' in constraints:
-                diff = constraints['difference']
-                if p_type == 'subtraction':
-                    b = random.SystemRandom().randint(max(slb, a - diff), sterm)  # Ensures the difference is at most diff
+            
+            #Get next term
+            for i in range(1, num_terms+1):
+                if 'difference' in constraints:
+                    diff = constraints['difference']
+                    if p_type == 'subtraction':
+                        terms[i] = random.SystemRandom().randint(max(slb, terms[0] - diff), sterm)  # Ensures the difference is at most diff
+                    else:
+                        terms[i] = random.SystemRandom().randint(max(slb,terms[0]-diff), min(terms[0]+diff, largest))
+                elif 'lower bound' in constraints:
+                    lb = constraints['lower bound']
+                    terms[i] = random.SystemRandom().randint(lb-terms[0], largest)
+                elif 'max' in constraints:
+                    terms[i] = random.SystemRandom().randint(slb, min(largest, m - terms[0]))  # Ensures sum is <= max_value
                 else:
-                    b = random.SystemRandom().randint(max(slb,a-diff), min(a+diff, largest))
-            elif 'lower bound' in constraints:
-                lb = constraints['lower bound']
-                b = random.SystemRandom().randint(lb-a, largest)
-            elif 'max' in constraints:
-                b = random.SystemRandom().randint(slb, min(largest, m - a))  # Ensures sum is <= max_value
-            else:
-                print([slb,sterm])
-                b = random.SystemRandom().randint(slb, sterm)
+                    print([slb,sterm])
+                    terms[i] = random.SystemRandom().randint(slb, sterm)
 
-        new_problems.append((a, b))
-
-        # if p_type in {'addition', 'multiplication'}:
-        #     new_problems.append((a, b))
-        # elif p_type == 'subtraction':
-        #     new_problems.append((a+b, random.choice([a,b])))
-
-    # elif p_type=='subtraction':
-    #     for _ in range(rows * cols):
-    #         a1 = a
-    #         b1 = b
-    #         while a1 == a and b1 == b: #Ensure the same problem does not appear twice in a row
-    #             a = random.SystemRandom().randint(max(flb,2), largest)
-    #             if 'smallest term' in constraints:
-    #                 sterm = constraints['smallest term']
-    #                 b = random.SystemRandom().randint(1, min(sterm,a - 1))  # Ensures the term being subtracted is at most p_info[2].
-    #             elif 'difference' in constraints:
-    #                 diff = constraints['difference']
-    #                 b = random.SystemRandom().randint(max(1, a - diff), a - 1)  # Ensures the difference is at most p_info[2]
-    #         new_problems.append((a, b))
+        new_problems.append(terms)
 
     return new_problems
 
