@@ -161,6 +161,20 @@
           pdf: /worksheets/dda4.pdf
           rows: 4
           cols: 5
+    
+    - description: Add three single-digit numbers
+      form: a + b + c = blank; fill in the blank. (a,b,c < 10)
+      algebra: False
+      worksheets:
+        - latex-description: A daily worksheet of addding three single-digit numbers.
+          number of terms: 3
+          constraints:
+            largest-term: 9
+          description: a,b,c < 10
+          filename: tda1
+          pdf: /worksheets/tda1.pdf
+          rows: 4
+          cols: 5
 
 - problem-type: Subtraction
   subtype:
