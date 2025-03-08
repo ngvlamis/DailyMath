@@ -22,7 +22,7 @@ import random, os, subprocess, shutil, glob, yaml
 def generate_problems(p_type, constraints, rows, cols, num_terms=2):
     # Initialize variables
     new_problems = []
-     terms = [0]*num_terms
+    terms = [0]*num_terms
  
     if p_type == 'subtraction':
         offset = 1
@@ -39,13 +39,16 @@ def generate_problems(p_type, constraints, rows, cols, num_terms=2):
         slb = constraints['smallest term lower']
     else:
         slb = smallest
-    print([slb,smallest])
+
     largest = constraints.get("largest-term")
 
 
     # Set lower bound on first term
     if 'largest term lower' in constraints:
-        flb = constraints['largest term lower']  # Set the lower bound for the first term
+        if p_type =='subtraction':
+            flb = max(constraints['largest term lower'],slb+1)
+        else:
+            flb = constraints['largest term lower']  # Set the lower bound for the first term
     else:
         flb = 0
 
@@ -55,7 +58,7 @@ def generate_problems(p_type, constraints, rows, cols, num_terms=2):
 
     for _ in range(rows * cols):
         #Initialize variable to check for repeat neighbors.
-        terms1 = terms
+        terms1 = list(terms) # Make a new list terms1.  Note: settings terms1=terms only make a memory reference; it does not create a new variable
    
         while terms1 == terms:  # Ensure the same problem does not appear twice in a row
             
@@ -78,7 +81,7 @@ def generate_problems(p_type, constraints, rows, cols, num_terms=2):
                     sterm = largest
             
             #Get next term
-            for i in range(1, num_terms+1):
+            for i in range(1, num_terms):
                 if 'difference' in constraints:
                     diff = constraints['difference']
                     if p_type == 'subtraction':
@@ -93,7 +96,7 @@ def generate_problems(p_type, constraints, rows, cols, num_terms=2):
                 else:
                     print([slb,sterm])
                     terms[i] = random.SystemRandom().randint(slb, sterm)
-
+            
         new_problems.append(terms)
 
     return new_problems
@@ -252,7 +255,6 @@ if __name__ == "__main__":
     with open(ws_yaml_path, 'r') as file:
         # Load the contents of the file
         config = yaml.safe_load(file)
-
     # Cycle through all the worksheets in the config file, generating the pdfs.
     for field in config: #Cylce through the types of problems, e.g., addition, subtraction, etc.
         problem_type = str.lower(field['problem-type']) #Record the type of problem.
