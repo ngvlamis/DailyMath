@@ -58,8 +58,8 @@ def generate_problems(p_type, constraints, rows, cols, num_terms=2):
 
     for _ in range(rows * cols):
         #Initialize variable to check for repeat neighbors.
-        terms1 = list(terms) # Make a new list terms1.  Note: settings terms1=terms only make a memory reference; it does not create a new variable
-   
+        terms1 = terms.copy() # Make a new list terms1.  Note: settings terms1=terms only make a memory reference; it does not create a new variable
+
         while terms1 == terms:  # Ensure the same problem does not appear twice in a row
             
             # Get first term
@@ -96,8 +96,9 @@ def generate_problems(p_type, constraints, rows, cols, num_terms=2):
                 else:
                     print([slb,sterm])
                     terms[i] = random.SystemRandom().randint(slb, sterm)
-            
-        new_problems.append(terms)
+        
+        new_problems.append(terms.copy())
+       
 
     return new_problems
 
