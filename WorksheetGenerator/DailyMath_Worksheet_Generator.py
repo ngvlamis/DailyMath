@@ -18,10 +18,12 @@
 """
 
 import random, os, subprocess, shutil, glob, yaml
+import time
 
-def generate_problems(p_type, constraints, rows, cols, num_terms=2):
+def generate_problems(p_type, constraints, rows, cols, num_terms):
     # Initialize variables
     new_problems = []
+   
     terms = [0]*num_terms
  
     if p_type == 'subtraction':
@@ -94,7 +96,6 @@ def generate_problems(p_type, constraints, rows, cols, num_terms=2):
                 elif 'max' in constraints:
                     terms[i] = random.SystemRandom().randint(slb, min(largest, m - terms[0]))  # Ensures sum is <= max_value
                 else:
-                    print([slb,sterm])
                     terms[i] = random.SystemRandom().randint(slb, sterm)
         
         new_problems.append(terms.copy())
@@ -103,7 +104,7 @@ def generate_problems(p_type, constraints, rows, cols, num_terms=2):
     return new_problems
 
 
-def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
+def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname, num_terms):
     box_height = str(4/(5*rows))+ r"\textheight"
     box_width = str(1/cols)+ r"\textwidth"
     latex_content = r"""\documentclass{article}
@@ -150,17 +151,18 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
 \bigskip
 \noindent
 """
-
+    x = [0]*num_terms
     for i in range(rows):
 
         for j in range(cols):
-            x = int_pairs[cols*i+j][0]
-            y = int_pairs[cols*i+j][1]
+            x = int_pairs[cols*i+j].copy()
+            # x = int_pairs[cols*i+j][0]
+            # y = int_pairs[cols*i+j][1]
 
             latex_content = latex_content + '\\Block{ \n'
 
             if fname == 'm10':
-                latex_content = latex_content + f'\[ {x} + {y} = 10 + \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} = \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} \] \n}}%\n'
+                latex_content = latex_content + f'\[ {x[0]} + {x[1]} = 10 + \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} = \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} \] \n}}%\n'
 
             else:
 
@@ -168,18 +170,20 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
                     latex_content = latex_content + '\\vspace{-.75ex}\n'
 
 
-                latex_content = (latex_content +
-                                 (  '\\[ \n'
-                                    '	\\begin{array}{l r}\n'
-                                    f'			& {x} \\\\\n'))
+                latex_content = (latex_content + 
+                                   ('\\[ \n'
+                                    '	\\begin{array}{l r}\n'))
+
+                for k in range(num_terms-1):
+                    latex_content = latex_content + f' & {x[k]} \\\\\n'
 
                 if not alg:
                     if p_type == 'addition':
-                        latex_content = latex_content + f'		+ 	& {y} \\\\\n'
+                        latex_content = latex_content + f'		+ 	& {x[num_terms-1]} \\\\\n'
                     elif p_type == 'multiplication':
-                        latex_content = latex_content + f'		\\times 	& {y} \\\\\n'
+                        latex_content = latex_content + f'		\\times 	& {x[num_terms-1]} \\\\\n'
                     elif p_type == 'subtraction':
-                        latex_content = latex_content + f'		-	& {y} \\\\\n'
+                        latex_content = latex_content + f'		-	& {x[num_terms-1]} \\\\\n'
 
                     latex_content = (latex_content +
                                      ('	    \hline\n'
@@ -193,19 +197,22 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
                         latex_content = (latex_content +
                                          (f'		+	&  \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
                                           '             \hline\n'
-                                          f'            & {x + y} \Tstrut \\\\\n'))
+                                          f'            & {sum(x)} \Tstrut \\\\\n'))
 
                     elif p_type == 'subtraction':
                         latex_content = (latex_content +
                                          (f'		-	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
                                           '             \hline\n'
-                                          f'            & {x - y} \Tstrut \\\\\n'))
+                                          f'            & {x[0] - sum(x[1:num_terms-1])} \Tstrut \\\\\n'))
 
                     elif p_type == 'multiplication':
+                        product = 1
+                        for num in x:
+                            product *= num
                         latex_content = (latex_content +
                                          (f'		\\times	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
                                           '             \hline\n'
-                                          f'            & {x * y} \Tstrut \\\\\n'))
+                                          f'            & {product} \Tstrut \\\\\n'))
 
                     latex_content = (latex_content +
                                      ('	\end{array}\n'
@@ -272,9 +279,14 @@ if __name__ == "__main__":
                 ws_constraints = worksheet['constraints']
                 ws_description = worksheet['latex-description']
                 ws_filename = worksheet['filename']
+                if 'number of terms' in worksheet:
+                    ws_terms = worksheet['number of terms']
+                else:
+                    ws_terms = 2
 
-                problems = generate_problems(problem_type, ws_constraints, ws_rows, ws_columns) # Generate the problems.
-                content = create_latex(ws_rows, ws_columns, problems, problem_type, ws_description, is_algebra, logo_path, ws_filename) # Take generated problems and write LaTeX file
+
+                problems = generate_problems(problem_type, ws_constraints, ws_rows, ws_columns, ws_terms) # Generate the problems.
+                content = create_latex(ws_rows, ws_columns, problems, problem_type, ws_description, is_algebra, logo_path, ws_filename, ws_terms) # Take generated problems and write LaTeX file
                 ws_filename = worksheet['filename']
                 save_latex_file(content, f'{ws_filename}.tex') # Save the LaTeX file
                 try:
