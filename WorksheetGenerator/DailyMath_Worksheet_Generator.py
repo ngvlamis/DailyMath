@@ -18,13 +18,14 @@
 """
 
 import random, os, subprocess, shutil, glob, yaml
+import time
 
-def generate_problems(p_type, constraints, rows, cols):
+def generate_problems(p_type, constraints, rows, cols, num_terms):
     # Initialize variables
     new_problems = []
-    a = 0
-    b = 0
-
+   
+    terms = [0]*num_terms
+ 
     if p_type == 'subtraction':
         offset = 1
     else:
@@ -40,13 +41,16 @@ def generate_problems(p_type, constraints, rows, cols):
         slb = constraints['smallest term lower']
     else:
         slb = smallest
-    print([slb,smallest])
+
     largest = constraints.get("largest-term")
 
 
     # Set lower bound on first term
     if 'largest term lower' in constraints:
-        flb = constraints['largest term lower']  # Set the lower bound for the first term
+        if p_type =='subtraction':
+            flb = max(constraints['largest term lower'],slb+1)
+        else:
+            flb = constraints['largest term lower']  # Set the lower bound for the first term
     else:
         flb = 0
 
@@ -56,68 +60,51 @@ def generate_problems(p_type, constraints, rows, cols):
 
     for _ in range(rows * cols):
         #Initialize variable to check for repeat neighbors.
-        a1 = a
-        b1 = b
+        terms1 = terms.copy() # Make a new list terms1.  Note: settings terms1=terms only make a memory reference; it does not create a new variable
 
-        while a1 == a and b1 == b:  # Ensure the same problem does not appear twice in a row
-
+        while terms1 == terms:  # Ensure the same problem does not appear twice in a row
+            
+            # Get first term
             if 'max' in constraints:
                 m = constraints['max']
-                a = random.SystemRandom().randint(max(smallest+offset, flb), min(largest, m))
+                terms[0] = random.SystemRandom().randint(max(smallest+offset, flb), min(largest, m))
             else:
-                a = random.SystemRandom().randint(max(flb, smallest+offset), largest)
+                terms[0] = random.SystemRandom().randint(max(flb, smallest+offset), largest)
 
             if 'smallest term' in constraints:
                 if p_type =='subtraction':
-                    sterm = min(constraints['smallest term'], a-1)
+                    sterm = min(constraints['smallest term'], terms[0]-1)
                 else:
                     sterm = constraints['smallest term']
             else:
                 if p_type == 'subtraction':
-                    sterm = a-1
+                    sterm = terms[0]-1
                 else:
                     sterm = largest
-
-            if 'difference' in constraints:
-                diff = constraints['difference']
-                if p_type == 'subtraction':
-                    b = random.SystemRandom().randint(max(slb, a - diff), sterm)  # Ensures the difference is at most diff
+            
+            #Get next terms
+            for i in range(1, num_terms):
+                if 'difference' in constraints:
+                    diff = constraints['difference']
+                    if p_type == 'subtraction':
+                        terms[i] = random.SystemRandom().randint(max(slb, terms[0] - diff), sterm)  # Ensures the difference is at most diff
+                    else:
+                        terms[i] = random.SystemRandom().randint(max(slb,terms[0]-diff), min(terms[0]+diff, largest))
+                elif 'lower bound' in constraints:
+                    lb = constraints['lower bound']
+                    terms[i] = random.SystemRandom().randint(lb-terms[0], largest)
+                elif 'max' in constraints:
+                    terms[i] = random.SystemRandom().randint(slb, min(largest, m - sum(terms[0:i])-(num_terms-1-i)))  # Ensures sum is <= max_value
                 else:
-                    b = random.SystemRandom().randint(max(slb,a-diff), min(a+diff, largest))
-            elif 'lower bound' in constraints:
-                lb = constraints['lower bound']
-                b = random.SystemRandom().randint(lb-a, largest)
-            elif 'max' in constraints:
-                b = random.SystemRandom().randint(slb, min(largest, m - a))  # Ensures sum is <= max_value
-            else:
-                print([slb,sterm])
-                b = random.SystemRandom().randint(slb, sterm)
-
-        new_problems.append((a, b))
-
-        # if p_type in {'addition', 'multiplication'}:
-        #     new_problems.append((a, b))
-        # elif p_type == 'subtraction':
-        #     new_problems.append((a+b, random.choice([a,b])))
-
-    # elif p_type=='subtraction':
-    #     for _ in range(rows * cols):
-    #         a1 = a
-    #         b1 = b
-    #         while a1 == a and b1 == b: #Ensure the same problem does not appear twice in a row
-    #             a = random.SystemRandom().randint(max(flb,2), largest)
-    #             if 'smallest term' in constraints:
-    #                 sterm = constraints['smallest term']
-    #                 b = random.SystemRandom().randint(1, min(sterm,a - 1))  # Ensures the term being subtracted is at most p_info[2].
-    #             elif 'difference' in constraints:
-    #                 diff = constraints['difference']
-    #                 b = random.SystemRandom().randint(max(1, a - diff), a - 1)  # Ensures the difference is at most p_info[2]
-    #         new_problems.append((a, b))
+                    terms[i] = random.SystemRandom().randint(slb, sterm)
+        
+        new_problems.append(terms.copy())
+       
 
     return new_problems
 
 
-def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
+def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname, num_terms, orientation):
     box_height = str(4/(5*rows))+ r"\textheight"
     box_width = str(1/cols)+ r"\textwidth"
     latex_content = r"""\documentclass{article}
@@ -164,17 +151,21 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
 \bigskip
 \noindent
 """
-
+    x = [0]*num_terms
     for i in range(rows):
 
         for j in range(cols):
-            x = int_pairs[cols*i+j][0]
-            y = int_pairs[cols*i+j][1]
+            x = int_pairs[cols*i+j].copy()
 
             latex_content = latex_content + '\\Block{ \n'
-
             if fname == 'm10':
-                latex_content = latex_content + f'\[ {x} + {y} = 10 + \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} = \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} \] \n}}%\n'
+                latex_content = latex_content + f'\[ {x[0]} + {x[1]} = 10 + \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} = \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} \] \n}}%\n'
+
+            elif orientation == 'horizontal':
+                latex_content = latex_content + f'\[ {x[0]} '
+                for k in range(1,num_terms):
+                    latex_content = latex_content + f'+ {x[k]} '
+                latex_content = latex_content + ' = \\fbox{\\rule[-2ex]{5ex}{0pt}\\rule{0pt}{3.5ex}} \] \n}%\n'
 
             else:
 
@@ -182,18 +173,20 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
                     latex_content = latex_content + '\\vspace{-.75ex}\n'
 
 
-                latex_content = (latex_content +
-                                 (  '\\[ \n'
-                                    '	\\begin{array}{l r}\n'
-                                    f'			& {x} \\\\\n'))
+                latex_content = (latex_content + 
+                                   ('\\[ \n'
+                                    '	\\begin{array}{l r}\n'))
+
+                for k in range(num_terms-1):
+                    latex_content = latex_content + f' & {x[k]} \\\\\n'
 
                 if not alg:
                     if p_type == 'addition':
-                        latex_content = latex_content + f'		+ 	& {y} \\\\\n'
+                        latex_content = latex_content + f'		+ 	& {x[num_terms-1]} \\\\\n'
                     elif p_type == 'multiplication':
-                        latex_content = latex_content + f'		\\times 	& {y} \\\\\n'
+                        latex_content = latex_content + f'		\\times 	& {x[num_terms-1]} \\\\\n'
                     elif p_type == 'subtraction':
-                        latex_content = latex_content + f'		-	& {y} \\\\\n'
+                        latex_content = latex_content + f'		-	& {x[num_terms-1]} \\\\\n'
 
                     latex_content = (latex_content +
                                      ('	    \hline\n'
@@ -207,19 +200,22 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname):
                         latex_content = (latex_content +
                                          (f'		+	&  \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
                                           '             \hline\n'
-                                          f'            & {x + y} \Tstrut \\\\\n'))
+                                          f'            & {sum(x)} \Tstrut \\\\\n'))
 
                     elif p_type == 'subtraction':
                         latex_content = (latex_content +
                                          (f'		-	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
                                           '             \hline\n'
-                                          f'            & {x - y} \Tstrut \\\\\n'))
+                                          f'            & {x[0] - sum(x[1:num_terms-1])} \Tstrut \\\\\n'))
 
                     elif p_type == 'multiplication':
+                        product = 1
+                        for num in x:
+                            product *= num
                         latex_content = (latex_content +
                                          (f'		\\times	& \\fbox{{\\rule{{4ex}}{{0pt}}\\rule{{0pt}}{{5ex}}}}  \\\\\n'
                                           '             \hline\n'
-                                          f'            & {x * y} \Tstrut \\\\\n'))
+                                          f'            & {product} \Tstrut \\\\\n'))
 
                     latex_content = (latex_content +
                                      ('	\end{array}\n'
@@ -270,7 +266,6 @@ if __name__ == "__main__":
     with open(ws_yaml_path, 'r') as file:
         # Load the contents of the file
         config = yaml.safe_load(file)
-
     # Cycle through all the worksheets in the config file, generating the pdfs.
     for field in config: #Cylce through the types of problems, e.g., addition, subtraction, etc.
         problem_type = str.lower(field['problem-type']) #Record the type of problem.
@@ -287,9 +282,22 @@ if __name__ == "__main__":
                 ws_constraints = worksheet['constraints']
                 ws_description = worksheet['latex-description']
                 ws_filename = worksheet['filename']
+                if 'number of terms' in worksheet:
+                    ws_terms = worksheet['number of terms']
+                else:
+                    ws_terms = 2
 
-                problems = generate_problems(problem_type, ws_constraints, ws_rows, ws_columns) # Generate the problems.
-                content = create_latex(ws_rows, ws_columns, problems, problem_type, ws_description, is_algebra, logo_path, ws_filename) # Take generated problems and write LaTeX file
+                if 'orientation' in worksheet:
+                    ws_orientation = worksheet['orientation']
+                elif ws_terms > 2:
+                    ws_orientation = 'horizontal'
+                else:
+                    ws_orientation = 'vertical'
+
+
+
+                problems = generate_problems(problem_type, ws_constraints, ws_rows, ws_columns, ws_terms) # Generate the problems.
+                content = create_latex(ws_rows, ws_columns, problems, problem_type, ws_description, is_algebra, logo_path, ws_filename, ws_terms, ws_orientation) # Take generated problems and write LaTeX file
                 ws_filename = worksheet['filename']
                 save_latex_file(content, f'{ws_filename}.tex') # Save the LaTeX file
                 try:
@@ -301,10 +309,10 @@ if __name__ == "__main__":
                 destination_path = pdf_destination + f'{ws_filename}.pdf'
                 shutil.move(source_path, destination_path) # Move pdfs to appropriate folder.
 
-    try:
-        delete_aux_files('') # Delete all the non-pdfs files generated during the process.
-        print("=" * 60)
-        print('Auxiliary files deleted successfully.')
-    except:
-        print("=" * 60)
-        print('Deleting auxiliary files failed.')
+    # try:
+    #     delete_aux_files('') # Delete all the non-pdfs files generated during the process.
+    #     print("=" * 60)
+    #     print('Auxiliary files deleted successfully.')
+    # except:
+    #     print("=" * 60)
+    #     print('Deleting auxiliary files failed.')
