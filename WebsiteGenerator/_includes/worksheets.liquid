@@ -7,11 +7,11 @@
   {% for type in site.data.worksheets %}
     <div class="accordion-item">
       <h2 class="accordion-header" id="ws{{ forloop.index }}">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ type.problem-type }}" aria-expanded="true" aria-controls="collapse{{ type.problem-type }}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ type.problem-type | replace: " ", "" }}" aria-expanded="true" aria-controls="collapse{{ type.problem-type | replace: " ", "" }}">
           <h4>{{ type.problem-type }} Worksheets</h4>
         </button>
       </h2>
-      <div id="collapse{{ type.problem-type }}" class="accordion-collapse collapse" aria-labelledby="heading{{ type.problem-type }}" data-bs-parent="#accordionExample">
+      <div id="collapse{{ type.problem-type | replace: " ", "" }}" class="accordion-collapse collapse" aria-labelledby="heading{{ type.problem-type | replace: " ","" }}" data-bs-parent="#accordionExample">
         <div class="accordion-body">
 
           <ul>
