@@ -162,7 +162,7 @@
           rows: 4
           cols: 5
     
-    - description: Add three single-digit numbers
+    - description: Adding three single-digit numbers
       form: a + b + c = blank; fill in the blank. (a,b,c < 10)
       algebra: False
       worksheets:
