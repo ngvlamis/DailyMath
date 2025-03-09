@@ -309,10 +309,10 @@ if __name__ == "__main__":
                 destination_path = pdf_destination + f'{ws_filename}.pdf'
                 shutil.move(source_path, destination_path) # Move pdfs to appropriate folder.
 
-    # try:
-    #     delete_aux_files('') # Delete all the non-pdfs files generated during the process.
-    #     print("=" * 60)
-    #     print('Auxiliary files deleted successfully.')
-    # except:
-    #     print("=" * 60)
-    #     print('Deleting auxiliary files failed.')
+    try:
+        delete_aux_files('') # Delete all the non-pdfs files generated during the process.
+        print("=" * 60)
+        print('Auxiliary files deleted successfully.')
+    except:
+        print("=" * 60)
+        print('Deleting auxiliary files failed.')
