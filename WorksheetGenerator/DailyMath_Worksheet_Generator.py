@@ -109,7 +109,7 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname, n
     box_width = str(1/cols)+ r"\textwidth"
     latex_content = r"""\documentclass{article}
 \usepackage[fontsize=20pt]{fontsize}
-\usepackage[letterpaper, margin=1in]{geometry}
+\usepackage[letterpaper, margin=.8in]{geometry}
 \usepackage{graphicx}
 
 
@@ -162,10 +162,32 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname, n
                 latex_content = latex_content + f'\[ {x[0]} + {x[1]} = 10 + \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} = \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} \] \n}}%\n'
 
             elif orientation == 'horizontal':
-                latex_content = latex_content + f'\[ {x[0]} '
-                for k in range(1,num_terms):
-                    latex_content = latex_content + f'+ {x[k]} '
-                latex_content = latex_content + ' = \\fbox{\\rule[-2ex]{5ex}{0pt}\\rule{0pt}{3.5ex}} \] \n}%\n'
+                if alg:  # Only setup for addition at moment
+                    blank = random.randint(0, num_terms-1) # We will randomly choose which term is left blank
+                    latex_content = latex_content + '\[ '
+                    if blank == 0:
+                        latex_content = latex_content + '\\fbox{\\rule[-2ex]{4ex}{0pt}\\rule{0pt}{3.5ex}} '
+                    else:
+                        latex_content = latex_content + f'{x[0]}'
+
+                    for k in range(1,num_terms):
+                        if blank == k:
+                            latex_content = latex_content + ' + \\fbox{\\rule[-2ex]{4ex}{0pt}\\rule{0pt}{3.5ex}} '
+                        else:
+                            latex_content = latex_content + f'+ {x[k]} '
+
+                    latex_content = latex_content + f' = {sum(x)} \] \n}}%\n'
+
+                else:
+                    latex_content = latex_content + f'\[ {x[0]} '
+                    for k in range(1,num_terms):
+                        if p_type == 'addition':
+                            latex_content = latex_content + f'+ {x[k]} '
+                        elif p_type == 'subtraction':
+                            latex_content = latex_content + f'- {x[k]} '
+                        elif p_type == 'multiplication':
+                            latex_content = latex_content + f'\\times {x[k]} '
+                    latex_content = latex_content + ' = \\fbox{\\rule[-2ex]{5ex}{0pt}\\rule{0pt}{3.5ex}} \] \n}%\n'
 
             else:
 
