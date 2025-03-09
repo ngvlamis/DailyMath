@@ -179,14 +179,22 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname, n
                     latex_content = latex_content + f' = {sum(x)} \] \n}}%\n'
 
                 else:
-                    latex_content = latex_content + f'\[ {x[0]} '
-                    for k in range(1,num_terms):
-                        if p_type == 'addition':
-                            latex_content = latex_content + f'+ {x[k]} '
-                        elif p_type == 'subtraction':
-                            latex_content = latex_content + f'- {x[k]} '
-                        elif p_type == 'multiplication':
-                            latex_content = latex_content + f'\\times {x[k]} '
+                    if p_type == 'mixed-as': # Mixed additiona and subtraction. Currently only setup for two-term problems
+                        op = random.randint(0,1)
+                        if op == 0:
+                            latex_content = latex_content + f'\[ {x[0]} + {x[1]} '
+                        else:
+                            latex_content = latex_content + f'\[ {sum(x)} - {x[0]} '
+                    else:
+                        latex_content = latex_content + f'\[ {x[0]} '
+                        for k in range(1,num_terms):
+                            if p_type == 'addition':
+                                latex_content = latex_content + f'+ {x[k]} '
+                            elif p_type == 'subtraction':
+                                latex_content = latex_content + f'- {x[k]} '
+                            elif p_type == 'multiplication':
+                                latex_content = latex_content + f'\\times {x[k]} '
+                            
                     latex_content = latex_content + ' = \\fbox{\\rule[-2ex]{5ex}{0pt}\\rule{0pt}{3.5ex}} \] \n}%\n'
 
             else:
