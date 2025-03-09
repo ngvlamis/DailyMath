@@ -44,8 +44,8 @@
           rows: 4
           cols: 5
 
-    - description: "Fill in the blank: adding two-single digit numbers"
-      form: a + blank = c; fill in the blank. (a,b &le; 9)
+    - description: "Fill in the blank: adding two single-digit numbers"
+      form: a + blank = c; fill in the blank. (a,blank &le; 9)
       algebra: True
       worksheets:
         - latex-description: A daily worksheet of one-digit addition problems, with a blank addend and sums up to 10.
@@ -205,6 +205,55 @@
           pdf: /worksheets/tda4.pdf
           rows: 6
           cols: 3
+
+    - description: "Fill in the blank: adding three single-digit numbers"
+      form: a + blank + c = d; fill in the blank. (a,blank,c &le; 9)
+      algebra: True
+      worksheets:
+        - latex-description: A daily worksheet of adding three single-digit numbers, with a missing addend and each term at most 5.
+          number of terms: 3
+          constraints:
+            largest-term: 5
+          description: a,blank,c &le; 5
+          filename: tsdaa1
+          pdf: /worksheets/tsdaa1.pdf
+          rows: 6
+          cols: 3
+
+        - latex-description: A daily worksheet of adding three single-digit numbers, with a missing addend and sum at most 15.
+          number of terms: 3
+          constraints:
+            largest-term: 9
+            max: 15
+          description: d &le; 15
+          filename: tsdaa2
+          pdf: /worksheets/tsdaa2.pdf
+          rows: 6
+          cols: 3
+
+        - latex-description: A daily worksheet of adding three single-digit numbers, with a missing addend and sum at most 20. 
+          number of terms: 3
+          constraints:
+            largest-term: 9
+            max: 20
+          description: d &le; 20
+          filename: tsdaa3
+          pdf: /worksheets/tsdaa3.pdf
+          rows: 6
+          cols: 3
+
+        - latex-description: A daily worksheet of adding three single-digit numbers, with a missing addend. 
+          number of terms: 3
+          constraints:
+            largest-term: 9
+          description: d &le; 27
+          filename: tsdaa4
+          pdf: /worksheets/tsdaa4.pdf
+          rows: 6
+          cols: 3
+
+
+
 
 
 
