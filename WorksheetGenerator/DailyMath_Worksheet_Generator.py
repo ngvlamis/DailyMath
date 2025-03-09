@@ -23,9 +23,11 @@ import time
 def generate_problems(p_type, constraints, rows, cols, num_terms):
     # Initialize variables
     new_problems = []
-   
     terms = [0]*num_terms
- 
+
+    if p_type == 'mixed-as':
+        p_type = 'addition'
+
     if p_type == 'subtraction':
         offset = 1
     else:
@@ -298,7 +300,12 @@ if __name__ == "__main__":
         config = yaml.safe_load(file)
     # Cycle through all the worksheets in the config file, generating the pdfs.
     for field in config: #Cylce through the types of problems, e.g., addition, subtraction, etc.
-        problem_type = str.lower(field['problem-type']) #Record the type of problem.
+         #Record the type of problem.
+        if field['problem-type']== "Mixed: Addition and Subtraction":
+            problem_type = "mixed-as"
+        else:
+            problem_type = str.lower(field['problem-type'])
+
         for topic in field['subtype']: # Cycle through the sub-fields, e.g., single digit addition.
             if 'algebra' in topic:
                 is_algebra = topic['algebra']
