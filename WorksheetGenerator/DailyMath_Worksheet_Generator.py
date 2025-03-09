@@ -82,7 +82,7 @@ def generate_problems(p_type, constraints, rows, cols, num_terms):
                 else:
                     sterm = largest
             
-            #Get next term
+            #Get next terms
             for i in range(1, num_terms):
                 if 'difference' in constraints:
                     diff = constraints['difference']
@@ -94,7 +94,7 @@ def generate_problems(p_type, constraints, rows, cols, num_terms):
                     lb = constraints['lower bound']
                     terms[i] = random.SystemRandom().randint(lb-terms[0], largest)
                 elif 'max' in constraints:
-                    terms[i] = random.SystemRandom().randint(slb, min(largest, m - terms[0]))  # Ensures sum is <= max_value
+                    terms[i] = random.SystemRandom().randint(slb, min(largest, m - sum(terms[0:i])-(num_terms-1-i)))  # Ensures sum is <= max_value
                 else:
                     terms[i] = random.SystemRandom().randint(slb, sterm)
         
@@ -104,7 +104,7 @@ def generate_problems(p_type, constraints, rows, cols, num_terms):
     return new_problems
 
 
-def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname, num_terms):
+def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname, num_terms, orientation):
     box_height = str(4/(5*rows))+ r"\textheight"
     box_width = str(1/cols)+ r"\textwidth"
     latex_content = r"""\documentclass{article}
@@ -156,13 +156,16 @@ def create_latex(rows, cols, int_pairs, p_type, description, alg, logo, fname, n
 
         for j in range(cols):
             x = int_pairs[cols*i+j].copy()
-            # x = int_pairs[cols*i+j][0]
-            # y = int_pairs[cols*i+j][1]
 
             latex_content = latex_content + '\\Block{ \n'
-
             if fname == 'm10':
                 latex_content = latex_content + f'\[ {x[0]} + {x[1]} = 10 + \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} = \\fbox{{\\rule[-2ex]{{5ex}}{{0pt}}\\rule{{0pt}}{{3.5ex}}}} \] \n}}%\n'
+
+            elif orientation == 'horizontal':
+                latex_content = latex_content + f'\[ {x[0]} '
+                for k in range(1,num_terms):
+                    latex_content = latex_content + f'+ {x[k]} '
+                latex_content = latex_content + ' = \\fbox{\\rule[-2ex]{5ex}{0pt}\\rule{0pt}{3.5ex}} \] \n}%\n'
 
             else:
 
@@ -284,9 +287,17 @@ if __name__ == "__main__":
                 else:
                     ws_terms = 2
 
+                if 'orientation' in worksheet:
+                    ws_orientation = worksheet['orientation']
+                elif ws_terms > 2:
+                    ws_orientation = 'horizontal'
+                else:
+                    ws_orientation = 'vertical'
+
+
 
                 problems = generate_problems(problem_type, ws_constraints, ws_rows, ws_columns, ws_terms) # Generate the problems.
-                content = create_latex(ws_rows, ws_columns, problems, problem_type, ws_description, is_algebra, logo_path, ws_filename, ws_terms) # Take generated problems and write LaTeX file
+                content = create_latex(ws_rows, ws_columns, problems, problem_type, ws_description, is_algebra, logo_path, ws_filename, ws_terms, ws_orientation) # Take generated problems and write LaTeX file
                 ws_filename = worksheet['filename']
                 save_latex_file(content, f'{ws_filename}.tex') # Save the LaTeX file
                 try:
@@ -298,10 +309,10 @@ if __name__ == "__main__":
                 destination_path = pdf_destination + f'{ws_filename}.pdf'
                 shutil.move(source_path, destination_path) # Move pdfs to appropriate folder.
 
-    try:
-        delete_aux_files('') # Delete all the non-pdfs files generated during the process.
-        print("=" * 60)
-        print('Auxiliary files deleted successfully.')
-    except:
-        print("=" * 60)
-        print('Deleting auxiliary files failed.')
+    # try:
+    #     delete_aux_files('') # Delete all the non-pdfs files generated during the process.
+    #     print("=" * 60)
+    #     print('Auxiliary files deleted successfully.')
+    # except:
+    #     print("=" * 60)
+    #     print('Deleting auxiliary files failed.')
