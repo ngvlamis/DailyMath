@@ -342,6 +342,21 @@
           rows: 4
           cols: 5
 
+- problem-type: "Mixed: Addition and Subtraction"
+  subtype:
+    - description: Adding and Subtracting two numbers
+      form: a + b = blank or x - y = blank; fill in the blank. (a,b,y < 10, x < 20, x-y <10)
+      algebra: False
+      worksheets:
+        - latex-description: A daily worksheet of mixed addition and subtraction problems.
+          orientation: horizontal
+          constraints:
+            largest-term: 9
+          description: a,b,y < 10, x<20, x-y<10
+          filename: mas1
+          pdf: /worksheets/mas1.pdf
+          rows: 6
+          cols: 3
 - problem-type: Multiplication
   subtype:
     - description: Multiplying two numbers, each less than 10.
@@ -384,3 +399,6 @@
           pdf: /worksheets/sdm4.pdf
           rows: 4
           cols: 5
+
+
+
