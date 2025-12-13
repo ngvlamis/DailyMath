@@ -69,9 +69,9 @@ def generate_problems(p_type, constraints, rows, cols, num_terms):
             # Get first term
             if 'max' in constraints:
                 m = constraints['max']
-                terms[0] = random.SystemRandom().randint(max(smallest+offset, flb), min(largest, m))
+                terms[0] = random.SystemRandom().randint(max(slb,smallest+offset,flb), min(largest, m))
             else:
-                terms[0] = random.SystemRandom().randint(max(flb, smallest+offset), largest)
+                terms[0] = random.SystemRandom().randint(max(flb,slb,smallest+offset), largest)
 
             if 'smallest term' in constraints:
                 if p_type =='subtraction':

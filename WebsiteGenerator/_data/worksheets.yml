@@ -44,6 +44,17 @@
           rows: 4
           cols: 5
 
+        - latex-description: A daily worksheet of one-digit addition problems.
+          constraints:
+            largest-term: 9
+            lower bound: 11
+            smallest term lower: 3
+          description: '11 &le; a+b &le; 18'
+          filename: sda5
+          pdf: /worksheets/sda5.pdf
+          rows: 4
+          cols: 5
+
     - description: "Fill in the blank: adding two single-digit numbers"
       form: a + blank = c; fill in the blank. (a,blank &le; 9)
       algebra: True
