@@ -173,8 +173,8 @@
           rows: 4
           cols: 5
 
-    - description: Adding two numbers, each less than 100
-      form: 'a+b = blank; fill in the blank. (a,b < 100)'
+    - description: Adding two numbers with sum at most 100
+      form: 'a+b = blank; fill in the blank. (a+b < 100)'
       algebra: False
       worksheets:
         - latex-description: A daily worksheet of adding two numbers whose sum is at most 60.
@@ -201,8 +201,9 @@
     
         - latex-description: A daily worksheet of adding two numbers, each less than 100.
           constraints:
-            largest-term: 99
-          description: a,b < 100
+            largest-term: 90
+            max: 100
+          description: a,b &le; 90, a+b &le; 100
           filename: dda7
           pdf: /worksheets/dda7.pdf
           rows: 6
