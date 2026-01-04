@@ -210,6 +210,40 @@
           cols: 3
           orientation: horizontal
 
+    - description: Adding two numbers with sum at most 100 (Vertical orientation)
+      form: 'a+b = blank; fill in the blank. (a+b < 100)'
+      algebra: False
+      worksheets:
+        - latex-description: A daily worksheet of adding two numbers whose sum is at most 60.
+          constraints:
+            largest-term: 50
+            max: 60
+          description: a,b &le; 50, a+b &le; 60
+          filename: dda8
+          pdf: /worksheets/dda8.pdf
+          rows: 4
+          cols: 5
+
+        - latex-description: A daily worksheet of adding two numbers whose sum is at most 80.
+          constraints:
+            largest-term: 70
+            max: 80
+          description: a,b &le; 70, a+b &le; 80
+          filename: dda9
+          pdf: /worksheets/dda9.pdf
+          rows: 4
+          cols: 5
+    
+        - latex-description: A daily worksheet of adding two numbers, each less than 100.
+          constraints:
+            largest-term: 90
+            max: 100
+          description: a,b &le; 90, a+b &le; 100
+          filename: dda10
+          pdf: /worksheets/dda10.pdf
+          rows: 4
+          cols: 5
+
     - description: Adding three single-digit numbers
       form: a + b + c = blank; fill in the blank. (a,b,c < 10)
       algebra: False
