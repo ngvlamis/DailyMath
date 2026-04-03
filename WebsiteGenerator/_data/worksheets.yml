@@ -385,8 +385,8 @@
           description: No carry required
           filename: dda14
           pdf: /worksheets/dda14.pdf
-          rows: 6
-          cols: 3
+          rows: 4
+          cols: 5
           orientation: vertical 
 
         - latex-description: A daily worksheet adding two numbers, each less than 100. Carrying is required.
@@ -396,8 +396,8 @@
           description: Carry required 
           filename: dda15
           pdf: /worksheets/dda15.pdf
-          rows: 6
-          cols: 3
+          rows: 4
+          cols: 5
           orientation: vertical 
     
         - latex-description: A daily worksheet adding two numbers, each less than 100.
@@ -406,8 +406,8 @@
           description: a,b < 100
           filename: dda16
           pdf: /worksheets/dda16.pdf
-          rows: 6
-          cols: 3
+          rows: 4
+          cols: 5
           orientation: vertical 
 
     - description: Adding two numbers, each less than 1000
@@ -419,20 +419,20 @@
             largest-term: 995
             max: 1000
           description: a+b &le; 1000
-          filename: dda17
-          pdf: /worksheets/dda17.pdf
-          rows: 6
-          cols: 3
+          filename: tripleda1
+          pdf: /worksheets/tripleda1.pdf
+          rows: 4
+          cols: 5
           orientation: vertical 
 
         - latex-description: A daily worksheet adding two numbers, each less than 1000.
           constraints:
             largest-term: 995
           description: a,b < 1000
-          filename: dda18
-          pdf: /worksheets/dda18.pdf
-          rows: 6
-          cols: 3
+          filename: tripleda2
+          pdf: /worksheets/tripleda2.pdf
+          rows: 4
+          cols: 5
           orientation: vertical
  
 
