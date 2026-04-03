@@ -367,7 +367,7 @@
         - latex-description: A daily worksheet adding two numbers, each less than 100.
           constraints:
             largest-term: 95
-          description: a+b &le; 100
+          description: a,b < 100
           filename: dda13
           pdf: /worksheets/dda13.pdf
           rows: 6
