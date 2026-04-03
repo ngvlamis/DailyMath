@@ -410,6 +410,32 @@
           cols: 3
           orientation: vertical 
 
+    - description: Adding two numbers, each less than 1000
+      form: 'a+b = blank; fill in the blank. (0 < a,b < 1000)'
+      algebra: False
+      worksheets:
+        - latex-description: A daily worksheet adding two numbers that sum to less than 1000.
+          constraints:
+            largest-term: 995
+            max: 1000
+          description: a+b &le; 1000
+          filename: dda17
+          pdf: /worksheets/dda17.pdf
+          rows: 6
+          cols: 3
+          orientation: vertical 
+
+        - latex-description: A daily worksheet adding two numbers, each less than 1000.
+          constraints:
+            largest-term: 995
+          description: a,b < 1000
+          filename: dda18
+          pdf: /worksheets/dda18.pdf
+          rows: 6
+          cols: 3
+          orientation: vertical
+ 
+
 - problem-type: Subtraction
   subtype:
     - description: Subtracting two numbers, each less than 10
