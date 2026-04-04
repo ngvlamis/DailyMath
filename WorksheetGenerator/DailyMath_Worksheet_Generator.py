@@ -69,9 +69,9 @@ def generate_problems(p_type, constraints, rows, cols, num_terms):
             # Get first term
             if 'max' in constraints:
                 m = constraints['max']
-                terms[0] = random.SystemRandom().randint(max(slb,smallest+offset,flb), min(largest, m))
+                terms[0] = random.randint(max(slb,smallest+offset,flb), min(largest, m))
             else:
-                terms[0] = random.SystemRandom().randint(max(flb,slb,smallest+offset), largest)
+                terms[0] = random.randint(max(flb,slb,smallest+offset), largest)
 
             if 'smallest term' in constraints:
                 if p_type =='subtraction':
@@ -91,24 +91,22 @@ def generate_problems(p_type, constraints, rows, cols, num_terms):
                 if 'difference' in constraints:
                     diff = constraints['difference']
                     if p_type == 'subtraction':
-                        terms[i] = random.SystemRandom().randint(max(slb, terms[0] - diff), sterm)  # Ensures the difference is at most diff
+                        terms[i] = random.randint(max(slb, terms[0] - diff), sterm)  # Ensures the difference is at most diff
                     else:
-                        terms[i] = random.SystemRandom().randint(max(slb,terms[0]-diff), min(terms[0]+diff, largest))
+                        terms[i] = random.randint(max(slb,terms[0]-diff), min(terms[0]+diff, largest))
                 elif 'lower bound' in constraints:
                     lb = constraints['lower bound']
-                    terms[i] = random.SystemRandom().randint(lb-terms[0], largest)
+                    terms[i] = random.randint(lb-terms[0], largest)
                 elif 'carry' in constraints: 
                     # currently only setup for adding two numbers < 100
+                    t, u = divmod(terms[0],10)
                     if constraints['carry'] == 0:
-                        t, u = divmod(terms[0],10)
                         if 'max' in constraints:
                             new_t = random.randint(0, 9 - t)  # assuming max is 100 
                         else:
                             new_t = random.randint(0,9)
                         new_u = random.randint(0, 9 - u)
-                        terms[1] = new_t*10 + new_u
                     else:
-                        t, u = divmod(terms[0], 10)
                         if u == 0: # need ones place to be > 0
                             terms[0] = terms[0] + 1
                             u = u +1
@@ -118,11 +116,31 @@ def generate_problems(p_type, constraints, rows, cols, num_terms):
                             new_t = random.randint(0,9)
                         new_u = random.randint(10 - u, 9)  # units sum >= 10 (carry)
                         
-                        terms[i] = new_t*10 + new_u
+                    terms[i] = new_t*10 + new_u
+                elif 'borrowing' in constraints:
+                    t, u = divmod(terms[0], 10)
+                    if constraints['borrowing'] == 0:
+                        new_t = random.randint(0,t)
+                        if u == 0:
+                            terms[0] = terms[0] + 1
+                            u = u + 1
+                        if new_t == t:
+                            new_u = random.randint(0,u-1)
+                        else:
+                            new_u = random.randint(0,u)
+                    else:
+                        new_t = random.randint(0,t-1)
+                        if u == 9:
+                            terms[0] = terms[0]-1
+                            u = u - 1
+                        new_u = random.randint(u,9)
+
+                    terms[i] = max(new_t*10 + new_u,1)
+
                 elif 'max' in constraints:
-                    terms[i] = random.SystemRandom().randint(slb, min(largest, m - sum(terms[0:i])-(num_terms-1-i)))  # Ensures sum is <= max_value
+                    terms[i] = random.randint(slb, min(largest, m - sum(terms[0:i])-(num_terms-1-i)))  # Ensures sum is <= max_value
                 else:
-                    terms[i] = random.SystemRandom().randint(slb, sterm)
+                    terms[i] = random.randint(slb, sterm)
         
         new_problems.append(terms.copy())
        
