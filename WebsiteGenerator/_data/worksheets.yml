@@ -472,6 +472,9 @@
           rows: 4
           cols: 5
 
+
+
+
     - description: Subtracting two numbers, each at most 20
       form: a - b = blank; fill in the blank. (a,b &le; 20)
       algebra: False
@@ -518,6 +521,41 @@
           description: a,b &le; 20
           filename: dds4
           pdf: /worksheets/dds4.pdf
+          rows: 4
+          cols: 5
+
+    - description: Subtracting two numbers, each less than 100. 
+      form: a - b = blank; fill in the blank. (a,b &le; 100)
+      algebra: False
+      worksheets:
+        - latex-description: A daily worksheet of subtracting two numbers, each less than 100. No borrowing required. 
+          constraints: 
+            largest-term: 99
+            borrowing: 0
+          description: No borrowing
+          filename: dds5
+          pdf: /worksheets/dds5.pdf
+          rows: 4
+          cols: 5
+
+        - latex-description: A daily worksheet of subtracting two numbers, each less than 100. Borrowing required 
+          constraints: 
+            largest-term: 99
+            largest term lower: 10
+            borrowing: 1
+          description: Borrowing required
+          filename: dds6
+          pdf: /worksheets/dds6.pdf
+          rows: 4
+          cols: 5
+
+        - latex-description: A daily worksheet of subtracting two numbers, each less than 100. Borrowing required 
+          constraints: 
+            largest-term: 99
+            largest term lower: 10
+          description: a,b < 100
+          filename: dds7
+          pdf: /worksheets/dds7.pdf
           rows: 4
           cols: 5
 
